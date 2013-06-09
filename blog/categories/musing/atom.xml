@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Musing | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/musing/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-06-09T14:33:32-04:00</updated>
+  <updated>2013-06-09T16:19:30-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -18,7 +18,7 @@
     <link href="http://laptite.github.io/blog/2013/06/09/prelude-to-coding/"/>
     <updated>2013-06-09T00:34:00-04:00</updated>
     <id>http://laptite.github.io/blog/2013/06/09/prelude-to-coding</id>
-    <content type="html"><![CDATA[<p><img class="center" src="/images/bored_20px.png" width="350" height="232" title="[Pixel Img]" ><br>
+    <content type="html"><![CDATA[<p><img class="center" src="/images/Bored_20px.png" width="350" height="232" title="[Pixel Img]" ><br>
 <FONT FACE= "Courier New">
 $ emacs -batch -l dunnet</p>
 
