@@ -6,7 +6,7 @@ date: 2013-06-09 00:34
 comments: true
 categories: 
 ---
-{% img center ../images/bored_20px.png 350 232 [Prelude to Coding [Alisa img]] %}<br>
+{% img center ../images/bored_20px.png 350 232 [[Alisa img]] %}<br>
 <FONT FACE= "Courier New"><br>
 $ emacs -batch -l dunnet
 
