@@ -6,7 +6,7 @@ date: 2013-06-09 00:34
 comments: true
 categories: [Adventure game, Musing]
 ---
-{% img center /images/bored_20px.png 350 232 [Pixel Img] %}<br>
+{% img center /images/Bored_20px.png 350 232 [Pixel Img] %}<br>
 <FONT FACE= "Courier New">
 $ emacs -batch -l dunnet
 
