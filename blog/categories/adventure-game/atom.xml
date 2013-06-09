@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Adventure game | My Octopress Blog]]></title>
+  <title><![CDATA[Category: Adventure game | My Little Octopress Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/adventure-game/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-06-09T12:43:46-04:00</updated>
+  <updated>2013-06-09T12:47:37-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
