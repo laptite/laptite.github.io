@@ -4,7 +4,7 @@
   <title><![CDATA[My Little Octopress Blog]]></title>
   <link href="http://laptite.github.io/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-06-09T12:47:37-04:00</updated>
+  <updated>2013-06-09T12:57:31-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -19,17 +19,17 @@
     <updated>2013-06-09T00:34:00-04:00</updated>
     <id>http://laptite.github.io/blog/2013/06/09/prelude-to-coding</id>
     <content type="html"><![CDATA[<p><img class="center" src="http://laptite.github.io/images/bored_20px.png" width="350" height="232" title="[Pixel Img]" ><br>
-<FONT FACE= "Courier New"><br>
+<FONT FACE= "Courier New">
 $ emacs -batch -l dunnet</p>
 
 <p>Dead end<br>
 You are at a dead end of a dirt road.  The road goes to the east.  In the distance you can see that it will eventually fork off.  The trees here are very tall royal palms, and they are spaced equidistant from each other.
 There is a shovel here. <br>
->
-<FONT FACE= "Arial"><br>
-Every once or twice in a lifetime, you’re given this incredible gift:  The realization of a dead end, coupled with an opportunity to start over.  You might choose to ignore the chance and unhappily continue along the same old but ‘safe’ path.  But I won&rsquo;t. Not me.  Not anymore.</p>
+></p>
 
-<p><FONT FACE= "Courier New">
+<p><FONT FACE= "Arial">
+Every once or twice in a lifetime, you’re given this incredible gift:  The realization of a dead end, coupled with an opportunity to start over.  You might choose to ignore the chance and unhappily continue along the same old but ‘safe’ path.  But I won&rsquo;t. Not me.  Not anymore.
+<FONT FACE= "Courier New"><br>
 > Take shovel <br>
 Taken.<br>
 >
@@ -70,10 +70,9 @@ I don&rsquo;t understand that.<br>
 I don&rsquo;t understand that.</p>
 
 <p><FONT FACE= "Arial">
-In the interim everyone around me keeps telling me to do what I love. Do what you love.  What does that mean?  I keep on my ‘safe’ path and then&hellip;</p>
-
-<p><FONT FACE= "Courier New">
-You begin to shake a tree, and notice a coconut begin to fall from the air. As you try to get your hand up to block it, you feel the impact as it lands on your head. You are dead.
+In the interim everyone around me keeps telling me to do what I love. Do what you love.  What does that mean?  I keep on my ‘safe’ path and then&hellip;
+<FONT FACE= "Courier New">
+You begin to shake a tree, and notice a coconut begin to fall from the air. As you try to get your hand up to block it, you feel the impact as it lands on your head. You are dead.<br>
 You have scored 0 out of a possible 90 points.<br>
 $</p>
 
