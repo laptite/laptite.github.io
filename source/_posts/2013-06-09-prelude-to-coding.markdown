@@ -7,17 +7,17 @@ comments: true
 categories: [Adventure game, Musing]
 ---
 {% img center /images/bored_20px.png 350 232 [Pixel Img] %}<br>
-<FONT FACE= "Courier New"><br>
+<FONT FACE= "Courier New">
 $ emacs -batch -l dunnet
 
 Dead end<br>
 You are at a dead end of a dirt road.  The road goes to the east.  In the distance you can see that it will eventually fork off.  The trees here are very tall royal palms, and they are spaced equidistant from each other.
 There is a shovel here. <br>
 \>
-<FONT FACE= "Arial"><br>
-Every once or twice in a lifetime, you’re given this incredible gift:  The realization of a dead end, coupled with an opportunity to start over.  You might choose to ignore the chance and unhappily continue along the same old but ‘safe’ path.  But I won't. Not me.  Not anymore.
 
-<FONT FACE= "Courier New">
+<FONT FACE= "Arial">
+Every once or twice in a lifetime, you’re given this incredible gift:  The realization of a dead end, coupled with an opportunity to start over.  You might choose to ignore the chance and unhappily continue along the same old but ‘safe’ path.  But I won't. Not me.  Not anymore.
+<FONT FACE= "Courier New"><br>
 \> Take shovel <br>
 Taken.<br>
 \> 
@@ -59,9 +59,8 @@ I don't understand that.
 
 <FONT FACE= "Arial">
 In the interim everyone around me keeps telling me to do what I love. Do what you love.  What does that mean?  I keep on my ‘safe’ path and then...
-
 <FONT FACE= "Courier New">
-You begin to shake a tree, and notice a coconut begin to fall from the air. As you try to get your hand up to block it, you feel the impact as it lands on your head. You are dead.
+You begin to shake a tree, and notice a coconut begin to fall from the air. As you try to get your hand up to block it, you feel the impact as it lands on your head. You are dead.<br>
 You have scored 0 out of a possible 90 points.<br>
 $
 
