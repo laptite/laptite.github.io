@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | My Little Blog]]></title>
+  <link href="http://laptite.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://laptite.github.io/"/>
+  <updated>2013-06-17T00:26:51-04:00</updated>
+  <id>http://laptite.github.io/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Learn Ruby online]]></title>
+    <link href="http://laptite.github.io/blog/2013/06/16/learn-ruby-online/"/>
+    <updated>2013-06-16T22:23:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/06/16/learn-ruby-online</id>
+    <content type="html"><![CDATA[<p><img src="/images/term-ruby.jpg" width="375" height="281" title="[Skillshare pic]" ><br>
+Source: Skillcrush</p>
+
+<p>I&rsquo;m the kind of person that likes books with pictures. I also tend to learn best by observing and grasping patterns.  So lucky for me, there are a number of interactive Ruby learning tools available to suit different learning styles.  I haven&rsquo;t yet checked all of these out, so this post is part review and part reminder.</p>
+
+<p><strong><a href="http://tryruby.org">TryRuby</a></strong><br>
+TryRuby is the most adorable browser-based learning tool ever. It&rsquo;s hosted by CodeSchool. I love the super-cute storybook layout and characters. I first tried this out about 6 months ago and while it was very easy to follow, I didn&rsquo;t really understand what I was doing or why. At the end of the module I didn&rsquo;t get the point of what I had just done. That said, TryRuby is so irresistible that you <em>will</em> start typing Ruby.</p>
+
+<p><strong><a href="http://rubykoans.com">RubyKoans</a></strong><br>
+I love the concept of RubyKoans. It&rsquo;s not browser-based. Instead you download a folder of ruby files and you go onto to follow a &ldquo;path to enlightenment.&rdquo; Having already learned the basics of Ruby, I&rsquo;ve found this game to be very helpful in reinforcing what I&rsquo;ve already learned to-date. It&rsquo;s definitely helped me get a handle on some weaknesses.  I wouldn&rsquo;t recommend this to a complete programming newbie.  This learning tool requires some familiarity with both a text editor and your terminal.</p>
+
+<p><strong><a href="http://www.rubeque.com">Rubeque</a></strong><br>
+I just heard about this one, and I really think this is going to help me hone my skills. Last week I didn&rsquo;t even know what an enumerable was, but this week I&rsquo;m ready to throw on the punching gloves! This browser-based tool gets you to &ldquo;hone your skills by solving small Ruby programs while competing against other Rubyists&rdquo;. Challenges are listed in a table, which you can filter by level of difficulty. Awesome. Did someone just turn on the music? It&rsquo;s the Eye of the Tiger, baby. Bring it on biznitch!</p>
+
+<p><strong><a href="https://github.com/ryanb/ruby-warrior">Ruby warrior</a></strong>
+While I fondly remember Adventure games of days gone by, I could never figure out what the heck word I was supposed to use to move forward. I sucked so bad at those games. This said I can&rsquo;t wait to try this one. Go to this git repo and get instructions on installing the gem and then it&rsquo;s off to the races. You&rsquo;re a warrior climbing a tall tower in search of a precious Ruby at the very top. To get to the next floor, you need to write Ruby script for the warrior to battle enemies, rescue captives, and reach the stairs. Sweet.</p>
+
+<p><strong><a href="http://hackety.com">Hackety Hack</a></strong><br>
+All these interactive tools have me so spoiled. You watch video, a cute cartoon, compete against each other and role-play. As Tony the Tiger would say &ldquo;It&rsquo;s grrrrreat!&rdquo; So honestly Hackety Hack, what are you thinking making me read words? Plus, I have to install an application that takes space on my hard drive? I don&rsquo;t think so homey.</p>
+
+<p><strong><a href="http://railsforzombies.org">RailsforZombies</a></strong><br>
+Classic learning tool by Codeschool to learn rails. Zombies and learning challenges: what more do you need? I&rsquo;d write more but I haven&rsquo;t finished it yet.</p>
+
+<p><strong><a href="http://rubymonk.com">RubyMonk</a></strong><br>
+I haven&rsquo;t tried this one yet but if Ruby&rsquo;s creator Yukihiro Matsumoto says he likes it, well then I&rsquo;m just going to have to go ahead and try it.</p>
+
+<p>Reference: <a href="https://speakerdeck.com/samnang/interactive-ruby-learning">https://speakerdeck.com/samnang/interactive-ruby-learning</a></p>
+]]></content>
+  </entry>
+  
+</feed>
