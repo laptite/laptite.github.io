@@ -4,7 +4,7 @@
   <title><![CDATA[Category: learn | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/learn/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-07-12T00:13:19-04:00</updated>
+  <updated>2013-07-12T00:18:33-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -82,7 +82,7 @@ pirates = Pirate.create([{ location: 'West Indies', name: 'Blackbeard'}, { locat
 
 <p>Don&rsquo;t just accept this. Look at the code in the controller files to get a feel for why each block exists.</p>
 
-<p><strong>Important!</strong> Notice that controllers are always plural. Don&rsquo;t mess this one up either unless you want your app to break.</p>
+<p><strong>Important!</strong> Notice that controllers are always plural. So be careful if you run &lsquo;rails generate controller pirate<strong>s</strong>&rsquo; instead of scaffold. Don&rsquo;t mess this one up either unless you want your app to break.</p>
 
 <p><strong>Step 5 &ndash; Get in the sandbox and play with your localhost site:</strong></p>
 
