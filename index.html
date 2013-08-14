@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="It&rsquo;s been a crazy 5 weeks at the Flatiron School, but things are finally starting to click &ndash; thanks in part to our instructors patiently &hellip;">
+  <meta name="description" content="We are in the 11th week of Flatiron School. It has been a whirlwind of learning, and it feels great to finally deploy our first Rails app today. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,304 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano/">Rails Deployment to Digital Ocean Ubuntu via Capistrano</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-13T18:58:00-04:00" pubdate data-updated="true">Aug 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img class="left" src="/images/holy-cow.png" width="194" height="187" title="[Pixel Img]" >
+We are in the 11th week of Flatiron School. It has been a whirlwind of learning, and it feels great to finally deploy our first Rails app today. Deployment was painful, so I&rsquo;m posting this walk-through in hopes that it might save someone some deployment time. My team started this process with high hopes of crushing it in 45 minutes. Instead we ran into all sorts of annoying problems to debug for the next 3 hours (ugh!).</p>
+
+<p>Some hurdles that were overcome and that are discussed in this post are: asset pre-compilation errors, Sunspot solr gem headaches, Database not seeding, and image_tag &lsquo;isn&rsquo;t precompiled&rsquo; error message.</p>
+
+<p>This walk-through builds on an excellent tutorial by guest speaker <a href="https://github.com/spikegrobstein/flatironschool-deployment_lecture/blob/master/lecture.md">Spike Grobstein</a>. My intent is not to plagiarize any of that work, but instead to add in some steps that were needed for me to get our application deployed and working.</p>
+
+<p>We were provided the following information by our TA Blake: (a) Digital Ocean droplet to serve our app, and (b) credentials (IP Address / Username: root / Password). He then sent us packing to work on our own because he&rsquo;s a meanie (just kidding). One skill you&rsquo;ll sharpen while in this program is your ability to walk in the dark. Not to worry though. There is light to be found for those who persevere. Anyway, I digress.</p>
+
+<p>Before you start anything you&rsquo;ll want to make sure that all working git branches are up-to-date, reviewed, merged and pushed up to master accordingly.  This may not be a big concern if you&rsquo;re working solo, but a critical step for our team of four sharing workload.</p>
+
+<p>Open terminal, cd into your Rails app and let&rsquo;s get ready to rumble.</p>
+
+<p><strong>PHASE 1: Connect to your spankin&#8217; new server</strong><br>
+<em>In the code base a hashtag # represents a comment, so don&rsquo;t type it &ndash; ok?</em></p>
+
+<p>Connect to your new server via SSH:</p>
+
+<pre><code>ssh root@XXX.XXX.XXX.XXX # plug your IP address in the place of the X's
+</code></pre>
+
+<p>Answer questions politely:</p>
+
+<pre><code>Are you sure you want to continue connecting (yes/no)? # type yes and press enter
+</code></pre>
+
+<p>Root is a super user, so you should really create a user for the app since it brings bad mojo on top of 7 years of bad luck to do otherwise &ndash; it&rsquo;s bad practice, so don&rsquo;t be that person:</p>
+
+<pre><code>useradd -s /bin/bash -G sudo -m outlinked # note: our app is called "outlinked", enter username.
+</code></pre>
+
+<p>Then you have to create a password for this user, but you won&rsquo;t be entering the password right away. You&rsquo;re going to tell the server which username you want to apply the password to:</p>
+
+<pre><code>passwd outlinked
+</code></pre>
+
+<p>When prompted for a password, choose one and confirm it.</p>
+
+<p>Groovy, now exit the server and connect as your alter-ego (aka your new username):</p>
+
+<pre><code>ssh outlinked@XXX.XXX.XXX.XXX # you know what to do with these X's now
+</code></pre>
+
+<p>Enter your password, and get ready to install the packages your app will need to run on your Ubuntu server.</p>
+
+<p><strong>PHASE 2: Get your server ready for your awesome application</strong></p>
+
+<p>Update your apt-repository and dependencies with this code:</p>
+
+<pre><code>sudo apt-get update
+</code></pre>
+
+<p>Then upgrade all installed packages with this code:</p>
+
+<pre><code>sudo apt-get upgrade
+</code></pre>
+
+<p>You&rsquo;ll be shown a list of packages that need upgrading, and then asked to confirm. Be polite and answer in the affirmative:</p>
+
+<pre><code>Y # press enter
+</code></pre>
+
+<p>Install build essential package:</p>
+
+<pre><code>sudo apt-get install build-essential
+</code></pre>
+
+<p>Install Ruby packages:</p>
+
+<pre><code>sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby1.9.1 libsqlite3-dev
+</code></pre>
+
+<p>Install Git:</p>
+
+<pre><code>sudo apt-get install git
+</code></pre>
+
+<p>Install XML libraries (this one is for gems using the stated libs e.g. Nokogiri):</p>
+
+<pre><code>sudo apt-get install libxml2-dev libxslt1-dev
+</code></pre>
+
+<p>Install Gem Bundler:</p>
+
+<pre><code>sudo gem install bundler
+</code></pre>
+
+<p>Install SQLite3:</p>
+
+<pre><code>sudo gem install sqlite3
+</code></pre>
+
+<p>Install nodejs (avoids compile errors with the Javascript framework):</p>
+
+<pre><code>sudo apt-get install nodejs
+</code></pre>
+
+<p>Install Capistrano, which you&rsquo;ll be using to deploy your app:</p>
+
+<pre><code>gem install capistrano
+</code></pre>
+
+<p>Install Passenger, which is an nginx module and your Rack webserver:</p>
+
+<pre><code>sudo gem install passenger
+sudo passenger-install-nginx-module
+sudo apt-get install libcurl4-openssl-dev libssl-dev zlib1g-dev
+sudo nano /opt/nginx/conf/nginx.conf # configure nginx
+# scroll through the nano file looking for #user  nobody;
+# uncomment that, and change nobody; to www-data;
+# keep scrolling and find the location block now
+# Replace the whole block:
+  location / {
+   root   html;
+  index  index.html index.htm;
+  }
+# with:
+  root /home/USERNAME/APPNAME/current/public;
+  passenger_enabled on;
+# Exit the editor (Ctrl + X)
+sudo ln -s /opt/nginx/sbin/nginx /usr/local/sbin/
+sudo nginx # Start nginx
+(To stop ngingx: sudo nginx -s stop)
+</code></pre>
+
+<p>Congratulations, you&rsquo;re well on your way to making your app dreams a reality!</p>
+
+<p><strong>PHASE 3: Application config files &amp; Deployment</strong></p>
+
+<p>Go ahead an open a new terminal tab so that you can cd back into your application&rsquo;s repo on your local drive. All Capistrano needs for you to type in the command line to start the deployment process is:</p>
+
+<pre><code>capify .
+</code></pre>
+
+<p>Excellent, let&rsquo;s update a few settings in our application to enable deployment.</p>
+
+<p>Navigate to the config directory, open deploy.rb and edit it as follows:</p>
+
+<pre><code>set :application, "outlinked" # Set application to USERNAME
+
+# Enter your github ssh handle (the https one didn't work for us)
+set :repository,  "git@github.com:flatiron-school/library-redux.git"
+
+set :user, 'outlinked' # Set user to USERNAME
+
+set :deploy_to, "/home/outlinked/outlinked" # Set deploy_to to /home/USERNAME/APPLICATION
+
+set :user_sudo, false
+
+set :rails_env, "production" # sets your server environment to Production mode
+
+set :scm, :git  # sets version control
+
+default_run_options[:pty] = true
+
+role :web, "XXX.XXX.XXX.XXX" # Your HTTP server, Apache/etc
+role :app, "XXX.XXX.XXX.XXX" # We made the app role the same as our `Web` server 
+
+# We made the database role the same as our our `Web` server 
+role :db,  "XXX.XXX.XXX.XXX", :primary =&gt; true # This is where Rails migrations will run
+
+# We're using Passenger mod_rails, so we uncommented this:
+namespace :deploy do
+  task :start do ; end
+  task :stop do ; end
+  task :restart, :roles =&gt; :app, :except =&gt; { :no_release =&gt; true } do
+    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+  end
+end
+</code></pre>
+
+<p>Cool. We&rsquo;re getting closer to the promise land.</p>
+
+<p>Now go into your Capfile in your application, and uncomment the following:</p>
+
+<pre><code>load 'deploy/assets' # this will precompile your assets every time you deploy
+</code></pre>
+
+<p>Oh yeah, don&rsquo;t forget to add and commit your changes:</p>
+
+<pre><code>git add .
+git commit -am "edit deploy.rb"
+git push
+</code></pre>
+
+<p>My team had to generate a deploy key because our application sits in a private Github repo. If this doesn&rsquo;t apply to you, keep reading because one day you&rsquo;ll need to do this. Switch your terminal tab so that you&rsquo;re back into your server command line and enter this code:</p>
+
+<pre><code>ssh-keygen -t rsa -b 4096 # Leave all requests for passwords blank! 
+                          # Hit enter until no more questions are asked.
+</code></pre>
+
+<p>Now you&rsquo;ll need to open your browser and navigate to your repo in Github. Click on &lsquo;Settings&rsquo; and then on &lsquo;Deploy key&rsquo;, and then finally on &lsquo;Add deploy key&rsquo;. Enter your github password, and go back to your server terminal to retrieve the key to copy/paste into github:</p>
+
+<pre><code>cat ~/.ssh/id_rsa.pub # copy everything from the ssh-rsa to username@host.
+                      # I first opened this file with nano, which only showed a partial key.
+                      # Don't enter a title for the key. Github will use your username.
+</code></pre>
+
+<p>Awesome. Now jump back into your other terminal window where you&rsquo;re in your local repo and run:</p>
+
+<pre><code>cap deploy:setup
+</code></pre>
+
+<p>This connects you to your server, prompts you for your password and creates your directory structure on the server. When you cd into your USERNAME directory in your server, you&rsquo;ll see three sub-directories: current, releases and shared. The current directory is the server equivalent of your application directory in your local directory.</p>
+
+<p>I should mention that a log folder wasn&rsquo;t immediately available in the current directory. This became an issue when I ran into a problem deploying and I couldn&rsquo;t get to my production.log to review error messages. I got help from our TA Joe for this, and there was some light-fingered magic going on, so I don&rsquo;t have exact code to post. My understanding is that the default logging directory is shared/log so he had to change that so that the Production.log file would be available in current/log. I couldn&rsquo;t tell you if he created a new directory or made an alias.</p>
+
+<p><strong>Guess what? It&rsquo;s time to deploy &ndash; Heck yeah!</strong><br>
+So you&rsquo;ve done like a million steps already and we&rsquo;re just deploying now. Pat yourself on the back and give yourself a high five.</p>
+
+<p>All your changes are committed, right? Cool. You&rsquo;re ready to deploy. From your local repo terminal, enter the magical Capistrano command while singing O Sole Mio:</p>
+
+<pre><code>cap deploy
+</code></pre>
+
+<p>Open your browser, type in your IP address in the url bar <code><a href="http://">http://</a>[your IP]</code></p>
+
+<p>Celebration time, right? Wrong. This is where error messages plagued me.</p>
+
+<p><strong>Important note:</strong> you know all that stuff you have to do in your local Rails app like bundle install and all that jazz? That doesn&rsquo;t magically happen in the server. All the routines required in your local drive, you&rsquo;re going to have to repeat here.</p>
+
+<p><strong>Problem no. 1 &ndash; Sunspot gem</strong>
+We installed this gem so that users can run searches in our app. This gem was a pain in the ass from day one. It runs a Java server and it&rsquo;s been a challenge to update every time we changed seats during pair programming. A good rule of thumb is that whatever you&rsquo;ve had to do to fix problems in your local drive, you&rsquo;ll likely have to repeat in your server environment. For one you have to install a Java environment:</p>
+
+<pre><code>sudo apt-get install openjdk-6-jdk
+</code></pre>
+
+<p>Next you&rsquo;ll need to cd into your app USERNAME/current and do all that other junk that fixes rake errors:</p>
+
+<pre><code>rails g sunspot_rails:install RAILS_ENV='production'
+rake sunspot:solr:start RAILS_ENV='production'
+rake sunspot:reindex RAILS_ENV='production'
+</code></pre>
+
+<p>The reason I&rsquo;m tacking on RAILS_ENV=&lsquo;production&rsquo; at the end of each rake command is that I haven&rsquo;t set up rake tasks in my config file in Rails to default to production mode. I figured this out after numerous failed attempts at seeding. According to my rails console the data was seeding, but it turns out the simple rake command populates the development database and not the production one. Did you know that typing <code>rails c</code> in the server gets you the development database and <code>rails c production</code> gets you the production database? Holy batman, it&rsquo;s a thing! Lesson learned after beating my head against the wall for about an hour.</p>
+
+<p>Time to setup the tables and seed the files:</p>
+
+<pre><code>bundle exec rake db:seed RAILS_ENV='production'
+rake db:migrate RAILS_ENV='production'
+</code></pre>
+
+<p>Restart the server now by typing:</p>
+
+<pre><code>touch tmp/restart.txt # if you get a permissions error: sudo touch tmp/restart.txt
+</code></pre>
+
+<p>Reload your browser and voilà! Did it work? For me it still didn&rsquo;t!</p>
+
+<p>Merde! Pardon my french, but this is wholly aggravating by this time. Thank goodness for TA Ashley for helping me retain my sanity.</p>
+
+<p>Here&rsquo;s the error message I was getting:</p>
+
+<pre><code>ActionView::Template::Error ( isn't precompiled):
+    17: (...)
+    20:   &lt;%= image_tag("#{topic_link.link.user.image}", size: "25x25") %&gt;
+</code></pre>
+
+<p>I was stuck on this Mo-Fo for at least an hour because every new person that swooped in concluded that it was a pre-compiling error. So round and round in circles I went. It turns out that this is a legit Rails issue that was brought up on github/Rails. Thank you Ashley, I&rsquo;m not a complete dope! The story here is this:</p>
+
+<p>My team didn&rsquo;t set a default image for avatars. Instead we just had an erb link in line 20. When there is no image available, there&rsquo;s a nil in this field. This was no big deal in development in our local drive, but in Production mode: no-likey. So we tried to put &lsquo;if statements&rsquo; to by-pass the error, but it didn&rsquo;t like that either. Long story short, we deleted the line in the short-term so that we could complete deployment. Tomorrow, I&rsquo;ll add a default image to my assets, which we can link to if image is nil.</p>
+
+<p>In the meantime? Success is sweet!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -510,6 +808,10 @@ $
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano/">Rails Deployment to Digital Ocean Ubuntu via Capistrano</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/07/10/argh/">Argh Matey: Connecting the Dots in Rails</a>
       </li>
     
@@ -523,10 +825,6 @@ $
     
       <li class="post">
         <a href="/blog/2013/06/09/prelude-to-coding/">Prelude to Coding</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/05/hello-world/">Hello World</a>
       </li>
     
   </ul>

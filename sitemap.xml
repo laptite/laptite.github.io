@@ -21,12 +21,18 @@
         <lastmod>2013-07-12T00:17:54-04:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://laptite.github.io/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano/
+        </loc>
+        <lastmod>2013-08-14T00:28:02-04:00</lastmod>
+    </url>
+    <url>
         <loc>http://laptite.github.io/blog/archives/</loc>
-        <lastmod>2013-07-12T00:17:54-04:00</lastmod>
+        <lastmod>2013-08-14T00:28:02-04:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/</loc>
-        <lastmod>2013-07-12T00:17:54-04:00</lastmod>
+        <lastmod>2013-08-14T00:28:02-04:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/robots.txt</loc>
