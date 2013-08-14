@@ -4,7 +4,7 @@
   <title><![CDATA[My Little Blog]]></title>
   <link href="http://laptite.github.io/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-14T00:28:37-04:00</updated>
+  <updated>2013-08-14T09:03:59-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -223,7 +223,7 @@ git push
 
 <p>This connects you to your server, prompts you for your password and creates your directory structure on the server. When you cd into your USERNAME directory in your server, you&rsquo;ll see three sub-directories: current, releases and shared. The current directory is the server equivalent of your application directory in your local directory.</p>
 
-<p>I should mention that a log folder wasn&rsquo;t immediately available in the current directory. This became an issue when I ran into a problem deploying and I couldn&rsquo;t get to my production.log to review error messages. I got help from our TA Joe for this, and there was some light-fingered magic going on, so I don&rsquo;t have exact code to post. My understanding is that the default logging directory is shared/log so he had to change that so that the Production.log file would be available in current/log. I couldn&rsquo;t tell you if he created a new directory or made an alias.</p>
+<p>I should mention that a log folder wasn&rsquo;t immediately available in the current directory. This became an issue when I ran into a problem deploying and I couldn&rsquo;t get to my production.log to review error messages. I got help from our TA Joe for this, and there was some light-fingered magic going on, so I don&rsquo;t have exact code to post. My understanding is that the Production.log file in the current directory points via symlink to a log file in the shared directory, which did not exist. You can check this status by doing an <code>ls -l</code> and looking for line items in red.</p>
 
 <p><strong>Guess what? It&rsquo;s time to deploy &ndash; Heck yeah!</strong><br>
 So you&rsquo;ve done like a million steps already and we&rsquo;re just deploying now. Pat yourself on the back and give yourself a high five.</p>
