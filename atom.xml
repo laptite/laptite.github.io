@@ -4,7 +4,7 @@
   <title><![CDATA[My Little Blog]]></title>
   <link href="http://laptite.github.io/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-14T09:03:59-04:00</updated>
+  <updated>2013-08-24T22:28:11-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,290 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby & Me: Converting roman numerals to arabic]]></title>
+    <link href="http://laptite.github.io/blog/2013/08/24/numerals/"/>
+    <updated>2013-08-24T11:45:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/08/24/numerals</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/FS_grad.jpg" width="256" height="192" title="[Pixel Img]" ></p>
+
+<p>Yesterday was a big day. I graduated from the FlatironSchool 12-week program (yay! applause).</p>
+
+<p>It&rsquo;s been an intense race to pack in as much knowledge as possible in a short time-frame. As a parting gift, we were given an appropriate signifier that we are now versatile web application developers: a swiss army knife.</p>
+
+<p>In recent weeks, it&rsquo;s been difficult not to notice time ticking away against our task list: <br>
+&ndash; Absorb knowledge<br>
+&ndash; Complete web application for ScienceFair<br>
+&ndash; Absorb knowledge<br>
+&ndash; Practice ruby problems in preparation for Interviews<br>
+&ndash; Absorb knowledge<br>
+&ndash; Ask for 11th-hour lectures to make sure we understand topic xyz<br>
+&ndash; Absorb knowledge<br></p>
+
+<p>In the end, as a coping mechanism, my peers and I decided that it was best to look at graduation not as the end of the road but as a new beginning. I&rsquo;m happy to say that I&rsquo;ve made it through the program. I&rsquo;m also happy to report that I&rsquo;ve largely absorbed most of my newfound knowledge.</p>
+
+<p>The harrowing schedule has made it difficult for many of us to keep up with our blogs, but I&rsquo;m ready and raring to go. So, I&rsquo;ve decided to start a new segment called &lsquo;Ruby &amp; Me&rsquo; to a) force me to review my notes, b) test my understanding of basic concepts, and c) document my thought process as I work through problems. The immediate result may not be pretty, but this is what the result looks like short of refactoring. In the words of our Dean, Avi Flombaum: Make it work &ndash; Make it right &ndash; Make it fast. Then and only then: refactor.</p>
+
+<p><strong>Problem: Convert roman numerals to arabic</strong></p>
+
+<p>I&rsquo;ve learned the hard way that it&rsquo;s paralyzing to look too far ahead. Small successes are productive and feel great. So, I start with the following pseudo-code:</p>
+
+<pre><code># Convert roman numerals to arabic:
+# I, V, X, L, C, D, M
+# NumTranslator.new("V") return arabic numeral value 5
+</code></pre>
+
+<p>My first goal is to create a class in which I can instantiate a new object and successfully pass my roman numeral between methods. By the way, I&rsquo;ve also learned the hard way that too much coding without testing is a recipe for disaster. The last thing I want is to get bogged down debugging my code, but I&rsquo;ve done it before&hellip; a lot. So, let&rsquo;s see how this works out:</p>
+
+<pre><code>class NumTranslator
+  def initialize(roman_numeral)
+    @numeral = roman_numeral
+  end
+
+  def translator
+    @numeral = "V" 
+  end
+end
+puts NumTranslator.new("V").translator
+
+return value #=&gt; V
+</code></pre>
+
+<p>My first test passes. Awesome! Now I want to setup a simple translator that deals with all single-digit roman numerals:</p>
+
+<pre><code>def translator
+    case @numeral
+    when "I" then 1
+    when "V" then 5
+    when "X" then 10
+    when "L" then 50
+    when "C" then 100
+    when "D" then 500
+    when "M" then 1000
+    else
+    puts "Please enter a roman numeral"
+  end 
+end
+puts NumTranslator.new("V").translator
+
+return value #=&gt; 5
+</code></pre>
+
+<p>Second test passes. Cool. Now I want to make sure that my full translation table works so I modify my call to accept user input:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).translator
+</code></pre>
+
+<p>At this point I realize that I should probably help guard my entries from my lightning fingers.</p>
+
+<pre><code>def initialize(roman_numeral)
+  @numeral = roman_numeral.upcase
+end
+</code></pre>
+
+<p>Sweet, now I can mistakenly enter a lowercase letter and it will automatically be upcased.</p>
+
+<p>Now comes the tough part. Translation is easy at a single digit level, but if I enter a multiple digit roman numeral, I get the following response: &ldquo;Please enter a roman numeral&rdquo;. It&rsquo;s time to alter my method so that I can deal with multiple letter roman numerals. I know that adjacent numerals sum to a total value e.g. &ldquo;III&rdquo; = 3. I also know that there are exceptions but I choose to ignore those for now.</p>
+
+<p>Since each digit within a roman numeral translates to a value, I decide to update my translator method to split the input string and see if I can get &ldquo;III&rdquo; to return 3. I decide to use the collect method because I want to add each letter to an array. This will allow me to iterate through and add up all the values.</p>
+
+<pre><code>def translator
+  @numeral = @numeral.split('').collect do |letter|
+    case letter
+    when "I" then 1
+    when "V" then 5
+    when "X" then 10
+    when "L" then 50
+    when "C" then 100
+    when "D" then 500
+    when "M" then 1000
+    else
+      puts "Please enter a roman numeral"
+    end
+  end
+  @numeral.inject(:+)
+end
+
+(...)
+
+gets.chomp #=&gt; "III"
+return value #=&gt; 3
+</code></pre>
+
+<p>Excellent! It works. It&rsquo;s time to get happy:</p>
+
+<pre><code>gets.chomp #=&gt; "XI"
+return value #=&gt; 11
+</code></pre>
+
+<p>Yippee!</p>
+
+<pre><code>gets.chomp #=&gt; "LV"
+return value #=&gt; 55
+</code></pre>
+
+<p>Hoorah!</p>
+
+<pre><code>gets.chomp #=&gt; "XX"
+return value #=&gt; 20
+</code></pre>
+
+<p>Woopdeedoo!</p>
+
+<pre><code>gets.chomp #=&gt; "IV"
+return value #=&gt; 6
+</code></pre>
+
+<p>Sigh. Ok, enough prolonging the inevitable. Good thing I&rsquo;ve learned to manipulate my expectations: Yay! Yay! Yay! Waaaah!</p>
+
+<p>Time for more pseudo-code:</p>
+
+<pre><code># Translator method assumes each single-digit character is unique
+# It splits and translates each character into a number, and adds it to an array
+# Exceptions must be converted to a single-digit string and added back to the roman numeral
+# Exceptions: "IV" = "4" / "IX" = "9" / "XL" = "F" (forty) / "XC" = "N" (ninety)
+</code></pre>
+
+<p>The translator method is already crazy long, so it seems appropriate to create a separate method to detect exceptions. I decide to start with &ldquo;IV&rdquo; and &ldquo;IX&rdquo; to keep things simple.</p>
+
+<pre><code>def detect_exception
+  if @numeral.include?("IV")
+    @numeral = @numeral.split("IV").push("4").inject(:+)
+  elsif @numeral.include?("IX")
+    @numeral = @numeral.split("IX").push("9").inject(:+)
+  else
+    @numeral
+  end
+end
+</code></pre>
+
+<p>Let&rsquo;s test this real quick:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).detect_exception
+
+gets.chomp #=&gt; "XXIV"
+return value #=&gt; "XX4"
+</code></pre>
+
+<p>Cool, that works.</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).detect_exception
+
+gets.chomp #=&gt; "LXIX"
+return value #=&gt; "LX9"
+</code></pre>
+
+<p>Awesome. Now I need to figure out how to expand this to include the other exceptions. I find that I can&rsquo;t just add these as additional elsif statements because there seems to be confusion with overlapping numerals, so I try to nest them:</p>
+
+<pre><code>def detect_exception
+    if @numeral.include?("IV")
+      @numeral = @numeral.split("IV").push("4").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("IX")
+      @numeral = @numeral.split("IX").push("9").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    else
+      @numeral
+    end
+  end
+</code></pre>
+
+<p>It&rsquo;s butt ugly, but it works. Only a single line needs to be added to the translator method to call this new method to detect exceptions:</p>
+
+<pre><code>def translator
+  @numeral = self.detect_exception
+  @numeral = @numeral.split('').collect do |letter|
+  (...)
+  end
+end
+</code></pre>
+
+<p>Excellent. Now we just need to test that everything works:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).translator
+
+gets.chomp #=&gt; "MMMDXCLXIX"
+return value #=&gt; "3669"
+</code></pre>
+
+<p>I can hardly contain myself. I run about fifteen different number combinations to make sure that everything works. Sweet! Hopefully, I didn&rsquo;t leave out any exceptions.</p>
+
+<p>Here&rsquo;s the final code:</p>
+
+<pre><code>class NumTranslator
+
+  def initialize(roman_numeral)
+    @numeral = roman_numeral.upcase
+  end
+
+  def detect_exception
+    if @numeral.include?("IV")
+      @numeral = @numeral.split("IV").push("4").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("IX")
+      @numeral = @numeral.split("IX").push("9").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    else
+      @numeral
+    end
+  end
+
+  def translator
+    @numeral = self.detect_exception
+    @numeral = @numeral.split('').collect do |letter|    
+      case letter
+      when "I" then 1
+      when "4" then 4
+      when "V" then 5
+      when "9" then 9
+      when "X" then 10
+      when "F" then 40
+      when "L" then 50
+      when "N" then 90
+      when "C" then 100
+      when "D" then 500
+      when "M" then 1000
+      else
+        puts "Please enter a roman numeral"
+      end
+    end
+    @numeral.inject(:+)
+  end
+  puts "Enter roman numeral to convert to arabic numeral: "
+  puts NumTranslator.new(gets.chomp).translator
+end
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[rails deployment to digital ocean ubuntu via capistrano]]></title>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: ruby, | My Little Blog]]></title>
-  <link href="http://laptite.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <title><![CDATA[Category: problems | My Little Blog]]></title>
+  <link href="http://laptite.github.io/blog/categories/problems/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
   <updated>2013-08-24T22:28:11-04:00</updated>
   <id>http://laptite.github.io/</id>
