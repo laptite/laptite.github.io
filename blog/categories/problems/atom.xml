@@ -4,7 +4,7 @@
   <title><![CDATA[Category: problems | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/problems/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-31T15:33:26-04:00</updated>
+  <updated>2013-08-31T15:34:25-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -289,7 +289,7 @@ return value #=&gt; "3669"
   end
 end
 puts "Enter roman numeral to convert to arabic numeral: "
-  puts NumTranslator.new(gets.chomp).translator
+puts NumTranslator.new(gets.chomp).translator
 </code></pre>
 ]]></content>
   </entry>
