@@ -283,6 +283,10 @@ return value #=&gt; "LX9"
       else
       @numeral
       end
+    elsif @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
     else
       @numeral
     end
@@ -337,32 +341,24 @@ return value #=&gt; "3669"
       else
       @numeral
       end
+    elsif @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
     else
       @numeral
     end
   end
 
   def translator
+    hashmap = {"I"=&gt;1,"4"=&gt;4,"V"=&gt;5,"9"=&gt;9,"X"=&gt;10,"F"=&gt;40,"L"=&gt;50,"N"=&gt;90,"C"=&gt;100,"D"=&gt;500,"M"=&gt;1000}
     @numeral = self.detect_exception
-    @numeral = @numeral.split('').collect do |letter|    
-      case letter
-      when "I" then 1
-      when "4" then 4
-      when "V" then 5
-      when "9" then 9
-      when "X" then 10
-      when "F" then 40
-      when "L" then 50
-      when "N" then 90
-      when "C" then 100
-      when "D" then 500
-      when "M" then 1000
-      else
-        puts "Please enter a roman numeral"
-      end
+    @numeral = @numeral.split('').collect do |numeral|
+      hashmap[numeral]
     end
-    @numeral.inject(:+)
+    @numeral.inject(:+)  
   end
+
   puts "Enter roman numeral to convert to arabic numeral: "
   puts NumTranslator.new(gets.chomp).translator
 end
