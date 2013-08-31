@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby, | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-31T15:21:44-04:00</updated>
+  <updated>2013-08-31T15:33:26-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -287,10 +287,9 @@ return value #=&gt; "3669"
     end
     @numeral.inject(:+)  
   end
-
-  puts "Enter roman numeral to convert to arabic numeral: "
-  puts NumTranslator.new(gets.chomp).translator
 end
+puts "Enter roman numeral to convert to arabic numeral: "
+  puts NumTranslator.new(gets.chomp).translator
 </code></pre>
 ]]></content>
   </entry>
