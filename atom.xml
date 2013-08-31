@@ -4,7 +4,7 @@
   <title><![CDATA[My Little Blog]]></title>
   <link href="http://laptite.github.io/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-31T15:16:01-04:00</updated>
+  <updated>2013-08-31T15:20:30-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -240,6 +240,8 @@ return value #=&gt; "3669"
 </code></pre>
 
 <p>I can hardly contain myself. I run about fifteen different number combinations to make sure that everything works. Sweet! Hopefully, I didn&rsquo;t leave out any exceptions.</p>
+
+<p>UPDATE: Special thanks to Ed for pointing out a problem with my nested conditions under detect_exception, and for suggesting saving on real estate by using a hashmap instead of a case statement.</p>
 
 <p>Here&rsquo;s the final code:</p>
 
