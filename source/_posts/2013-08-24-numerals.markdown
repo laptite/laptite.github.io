@@ -4,7 +4,7 @@ title: "Ruby & Me: Converting roman numerals to arabic"
 author: "Alisa Chang"
 date: 2013-08-24 11:45
 comments: true
-categories: ruby, problems
+categories: ruby problems
 ---
 
 {% img left /images/FS_grad.jpg 256 192 [Pixel Img] %}
@@ -240,7 +240,6 @@ Here's the final code:
         end
         @numeral.inject(:+)  
       end
-
-      puts "Enter roman numeral to convert to arabic numeral: "
-      puts NumTranslator.new(gets.chomp).translator
     end
+    puts "Enter roman numeral to convert to arabic numeral: "
+    puts NumTranslator.new(gets.chomp).translator

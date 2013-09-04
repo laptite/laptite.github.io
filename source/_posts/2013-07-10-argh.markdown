@@ -4,7 +4,7 @@ title: "Argh Matey: Connecting the dots in Rails"
 author: "Alisa Chang"
 date: 2013-07-10 23:39
 comments: true
-categories: [learn, rails, newbie]
+categories: [learn rails newbie]
 ---
 
 {% img left /images/argh.png 320 208 [Pixel Img] %}

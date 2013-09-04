@@ -4,7 +4,7 @@ title: "rails deployment to digital ocean ubuntu via capistrano"
 author: "Alisa Chang"
 date: 2013-08-13 18:58
 comments: true
-categories: rails, deployment
+categories: rails deployment
 ---
 
 {% img left /images/holy-cow.png 194 187 [Pixel Img] %}
