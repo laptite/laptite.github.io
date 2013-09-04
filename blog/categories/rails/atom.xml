@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rails | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-09-04T15:15:46-04:00</updated>
+  <updated>2013-09-04T15:25:32-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -18,7 +18,8 @@
     <link href="http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include/"/>
     <updated>2013-09-03T23:01:00-04:00</updated>
     <id>http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include</id>
-    <content type="html"><![CDATA[<p>The beautiful thing about ruby is that it wants to be expressive and legible &ndash; it aims to mimic human language. Unfortunately human language is not that consistent. Words are not used the same way all the time because usage is often driven by context. The good news is that Ruby makes some allowances for this and provides different ways (aka methods) to help us be more explicit in our programming.</p>
+    <content type="html"><![CDATA[<p><img class="left" src="/images/way.jpg" width="298" height="235" title="[Pixel Img]" >
+The beautiful thing about ruby is that it wants to be expressive and legible &ndash; it aims to mimic human language. Unfortunately human language is not that consistent. Words are not used the same way all the time because usage is often driven by context. The good news is that Ruby makes some allowances for this and provides different ways (aka methods) to help us be more explicit in our programming.</p>
 
 <p>For example, &lsquo;map&rsquo; is a method that performs the same job as &lsquo;collect&rsquo;, and there are times when you might find it preferable to specify that values are being collected from a block vs. when they are being mapped. The truth is though that &lsquo;map&rsquo; has been historically used in functional programming, and might sometimes be used to please the habitual self over semantic purpose.</p>
 
