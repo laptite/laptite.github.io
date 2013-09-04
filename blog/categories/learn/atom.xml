@@ -4,7 +4,7 @@
   <title><![CDATA[Category: learn | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/learn/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-31T15:34:45-04:00</updated>
+  <updated>2013-09-04T15:15:46-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,94 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Argh Matey: Connecting the dots in Rails]]></title>
-    <link href="http://laptite.github.io/blog/2013/07/10/argh/"/>
-    <updated>2013-07-10T23:39:00-04:00</updated>
-    <id>http://laptite.github.io/blog/2013/07/10/argh</id>
-    <content type="html"><![CDATA[<p><img class="left" src="/images/argh.png" width="320" height="208" title="[Pixel Img]" >
-It&rsquo;s been a crazy 5 weeks at the Flatiron School, but things are finally starting to click &ndash; thanks in part to our instructors patiently walking us through a number of examples. While this post might seem trivial to some readers, bear in mind that 5 weeks ago I had TextWrangler installed on my laptop. Ew. I know, like, for realz AND I was practicing stuff like var = x.</p>
-
-<p>Anyway, fast forward to the future: the one exercise that resonated with me was one relating Pirates and Ships. It helped me understand Ruby at a time that I hit a seemingly bottomless pit of &lsquo;why the heck don&rsquo;t I get this stuff?&rsquo; desperation. Plus, it kept me entertained since every sentence invariably ended up with an &ldquo;argh matey&rdquo; in my head.</p>
-
-<p>The good news is that after a few weeks of Ruby and a week of Sinatra, we&rsquo;ve started to delve into Rails. One benefit of learning Sinatra first is that you realize how magical Rails is. Holy Shit it does WHAT for you? Everything?! You just wave your magic wand and friggin' wha?! Ladies and Gentlemen [drumroll] et voilà [poof] ze app extraordinaire! [applause]</p>
-
-<p>Not exactly.</p>
-
-<p>The bad news is, we had homework due in which we were asked to populate a database and create a simple app based on a previous Sinatra application. How hard could that be? I mean Rails is freakin' magic after all. Ok, well maybe we also had to scrape data off a website first before.</p>
-
-<p>So (staring down at my laptop) my first question is how do I get data in this thing? At this point, I should mention that until recently, accessing and entering data has been something of a mystery to me. Everyone&rsquo;s debugging and doing params stuff while I can&rsquo;t seem to select the right command in irb that does anything useful &ndash; driving blind at 150mph. Classic. We&rsquo;ll come back to that.</p>
-
-<p>The first thing to grasp about Rails is that the framework is composed of three primary components the: Model, View and Controller. Note that the Model talks to the database using some Rails voodoo called ActiveRecord. I like this handy-dandy diagram because it shows you how the database interacts with the framework. But I hate this image because it confuses my thinking of where to enter my code so that it automagically pulls my data into the database. <img class="right" src="/images/mvc_github.png" width="453"></p>
-
-<p>No worries. There must be some guide that explicitly states how to get your data in, so that you can figuratively link your model, views and controller right? Wrong. Someone tell me why there isn&rsquo;t such as resource within the top 3 search results! I&rsquo;ll tell you why&hellip; like duh, you just setup your models, and then your controller is a basic ruby class and then all you have to do is just populate your database and test it in your views. And if you&rsquo;re having trouble with the data, you just throw in pry-debugger or raise params. Capisce? [blank stare] No.</p>
-
-<p>The first time I used Rails, I peeked into every folder trying to figure out the appropriate place for my database (see my Sublime sidebar below left). Now that I look at it, I feel like I should have been like: &ldquo;Duh, what about the db directory?&rdquo;</p>
-
-<p><img class="left" src="/images/sidebar.png" width="222"></p>
-
-<p>Let me break down my quandary for you. There are plenty search results for &lsquo;Rails database&rsquo; but the best answers show individual chunks of code without stating where it belongs. Some people talk about creating a controller and a model, others create just a model, there are examples on how to create a rake task in the lib directory, and others still enter their code in a seeds.rb file in the db directory. Everyone online has an opinion, and everyone&rsquo;s an expert.</p>
-
-<p>BUT if you just want to play around with Rails to get a hang of it, here&rsquo;s how I recommend you get started once you&rsquo;ve installed Rails.</p>
-
-<p><strong>Step 1 &ndash; Create a new rake application and cd into your application:</strong></p>
-
-<pre><code>&gt; rails new pirates-rails-app
-</code></pre>
-
-<p><strong>Step 2 &ndash; Create two Models (notice that Model title names are always singular):</strong></p>
-
-<pre><code>&gt; rails generate model Ship name:string pirate_id:integer
-</code></pre>
-
-<p>Follow the Rails convention of naming your components properly if you want your app to work properly. In this example we use column name and type, but you could omit this piece <code>[name:string pirate_id:integer]</code> and add whatever columns you like later.</p>
-
-<p>You should have two new ruby class files in the Model directory.</p>
-
-<pre><code>class Pirate &lt; ActiveRecord::Base
-   attr_accessible :location, :name
-end    
-
-class Ship &lt; ActiveRecord::Base
-   attr_accessible :name, :pirate_id
-end
-</code></pre>
-
-<p><strong>Step 3 &ndash; Enter some data to play with in the seed.rb file, which is in the db directory:</strong></p>
-
-<pre><code>ships = Ship.create([{ name: 'Queen Anne\'s Revenge', pirate_id: 1}, {name: 'Barnacle', pirate_id: 2}])
-pirates = Pirate.create([{ location: 'West Indies', name: 'Blackbeard'}, { location: 'Rumrunner Isle', name: 'JackSparrow' }])
-</code></pre>
-
-<p>Enter &lsquo;rails console&rsquo; in the command line to launch Rails irb console. If you can get your data to pass muster here, it should work in the seeds file. This won&rsquo;t work until you run a &lsquo;rake db:migrate&rsquo; to migrate your data into the database. Hold off on this for a little while.</p>
-
-<p><strong>Step 4 &ndash; The easiest way to create a Controller is to generate a scaffold. You&rsquo;ll probably hear all sorts of reasons why you should shun scaffolds, but it&rsquo;s a great way to see how things connect:</strong></p>
-
-<pre><code>&gt; rails generate scaffold Ship
-&gt; rails generate scaffold Pirate
-</code></pre>
-
-<p>Don&rsquo;t just accept this. Look at the code in the controller files to get a feel for why each block exists.</p>
-
-<p><strong>Important!</strong> Notice that controllers are always plural. So be careful if you run &lsquo;rails generate controller pirate<strong>s</strong>&rsquo; instead of scaffold. Don&rsquo;t mess this one up either unless you want your app to break.</p>
-
-<p><strong>Step 5 &ndash; Get in the sandbox and play with your localhost site:</strong></p>
-
-<pre><code>&gt; rake db:migrate 
-  # this migrates your tables to the database
-
-&gt; rake server
-  # this command will rackup a port for you to access your web app
-  # "Starting Rack on port 4000" -&gt; http://localhost:4000/
-
-&gt; rake routes 
-  # this allows you to see what web app routes are available
-</code></pre>
-
-<p>The View files associated with your scaffold and routes are in the view folder. Check them out and add some HTML and some styling. There&rsquo;s a lot more to do, but I found this to be a good start to wrap my head around the concept of MVC and Rails.</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[It gets better]]></title>

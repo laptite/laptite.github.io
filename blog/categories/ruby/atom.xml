@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: ruby, | My Little Blog]]></title>
+  <title><![CDATA[Category: ruby | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-08-31T15:34:45-04:00</updated>
+  <updated>2013-09-04T15:15:46-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,107 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby & Me: include vs other includes]]></title>
+    <link href="http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include/"/>
+    <updated>2013-09-03T23:01:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include</id>
+    <content type="html"><![CDATA[<p>The beautiful thing about ruby is that it wants to be expressive and legible &ndash; it aims to mimic human language. Unfortunately human language is not that consistent. Words are not used the same way all the time because usage is often driven by context. The good news is that Ruby makes some allowances for this and provides different ways (aka methods) to help us be more explicit in our programming.</p>
+
+<p>For example, &lsquo;map&rsquo; is a method that performs the same job as &lsquo;collect&rsquo;, and there are times when you might find it preferable to specify that values are being collected from a block vs. when they are being mapped. The truth is though that &lsquo;map&rsquo; has been historically used in functional programming, and might sometimes be used to please the habitual self over semantic purpose.</p>
+
+<p>So there we have it. Po-TAY-toh Po-TAH-toh&hellip; but this is America and we say Po-TAY-toh! Seriously though, it&rsquo;s best to use whatever language helps you and others easily read your code. But what happens when terms are the same, or overlap between Ruby and Rails?</p>
+
+<p>I was recently asked to explain what <strong>include</strong> does in Rails, and the first thing that came to mind was the ruby method include?(obj) &ndash; a boolean method that returns true if the given object is present in self:</p>
+
+<pre><code>grades = ["A", "C+", "B-"]
+grades.include?("A") #=&gt; true
+grades.include?("F") #=&gt; false
+</code></pre>
+
+<p>But &lsquo;include?&rsquo;&lsquo; is a ruby method, and the question specified Rails. Hm. Well, I&rsquo;ve used 'include&rsquo; in Ruby to mix in module instance methods, but I simply haven&rsquo;t had to use it in Rails. So later in the day I did what any self-respecting nerd would do, and looked its usage up in RailsGuide. I also asked my classmates and instructor the same question. Sample responses included: like where in Rails? in a mixin? a module? in eager loading? what do you mean?</p>
+
+<p>As Tony the Tiger says: grrreat.</p>
+
+<p>This post briefly explores the various uses of a similarly named method between Ruby (1.9.3) and Rails (3.2.13), using the variations of &ldquo;include&rdquo; as an example. The include method is not by any means the most exciting one, but it is one that is commonly used in different contexts.</p>
+
+<p>In Ruby, many methods such as <strong>include?</strong> can be similarly applied to various contexts with slight variations:</p>
+
+<pre><code>array.include?(true_if_this_object_is_present_in_array)
+  [1,2,3,4].include?(2) #=&gt; true
+  [1,2,3,4].include?(5) #=&gt; false
+
+hash.include?(true_if_this_key_is_present_in_hash)
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:name) #=&gt; true
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:gender) #=&gt; false
+
+"string".include?(true_if_this_string_or_character_is_present_in_string)
+  "hello".include?("el") #=&gt; true
+  "hello".include?("pi") #=&gt; false
+
+(range "this".."that").include?(true_if_this_object_is_an_element_of_range)
+  (34..76).include?(38) #=&gt; true
+  (34..76).include?(14) #=&gt; false
+
+environment_variable.include?(true_if_there_is_an_environment_variable_with_this_name)
+  PATH = "/Users/LittleApple/.rvm/gems/ruby-1.9.3-p429/bin"
+  ENV['PATH'].include?('bin') #=&gt; true
+  ENV['PATH'].include?('BigApple') #=&gt; false
+
+module.include?(true_if_this_module_is_present_in_the_module_or_one_of_the_module's_ancestors)
+  module Granny
+  end
+
+  class Mama
+    include Granny
+  end
+
+  class Baby &lt; Mama
+  end
+
+  Mama.include?(Granny)   #=&gt; true
+  Baby.include?(Granny)   #=&gt; true
+  Granny.include?(Granny) #=&gt; false
+</code></pre>
+
+<p>There are Public Class methods, Private Class methods, Module methods, Enumerable methods, and so on. This leads to some additional variations on the usage of &lsquo;include&rsquo; in Ruby:</p>
+
+<pre><code>Module.include(module, ...) 
+  #=&gt; used to mix module constants, methods, and variables into the Module or class instances.
+
+Module.included_modules 
+  #=&gt; returns an array list of modules that are included in Module.
+
+Module.included(other_module)
+  Module Hello
+    def Hello.included(other_module)
+      (...) 
+    end
+  end
+
+  Module
+    include Hello
+  end
+  #=&gt; callback is invoked when the (receiver) is included in another module or class. 
+</code></pre>
+
+<p>Moving onto Rails.</p>
+
+<p>ActiveRecord in Rails is an object relational mapping system that lets you retrieve objects from your database using queries that execute as SQL, without actually having to write raw SQL. Includes is one of the many finder methods available in ActiveRecord that helps minimize the number of queries run against your database.</p>
+
+<p>With the includes method, all associations can be specified in advance by passing arguments. This act of preloading is also known as eager loading, and is how ActiveRecord tackles N+1 &ndash; a problem that occurs with associations. When you load the parent object and start loading one child or association at a time, you end up having to run N+1 queries. Pre-loading associations minimizes the number of queries by way of its specificity:</p>
+
+<pre><code>School.includes("students").where(first_name: 'Ryan', students: {status: 'accepted'}).count
+</code></pre>
+
+<p>The includes method can come in handy when you want to display the same information in multiple views but don&rsquo;t want to bog down performance by repeatedly running the same query. To provide even more flexibility, Rails has an :include option for those times that a different finder method might be better suited to your query, but you still want to eager load associations.</p>
+
+<p>Since Rails runs on the Ruby programming language, the various &lsquo;include&rsquo; ruby class and module methods can be used to respectively drive object behavior or refer to modules, mix-ins or concerns.</p>
+
+<p>So there you have it. The many wonderful uses of the term &lsquo;include&rsquo;.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Ruby & Me: Converting roman numerals to arabic]]></title>
@@ -291,6 +392,61 @@ end
 puts "Enter roman numeral to convert to arabic numeral: "
 puts NumTranslator.new(gets.chomp).translator
 </code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[It gets better]]></title>
+    <link href="http://laptite.github.io/blog/2013/06/26/it-gets-better/"/>
+    <updated>2013-06-26T16:05:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/06/26/it-gets-better</id>
+    <content type="html"><![CDATA[<p><img class="left" src="/images/yessss.jpg" width="300" height="300" title="[Pixel Img]" >
+We&rsquo;re closing in on the 4th week of Flatiron School and so far it&rsquo;s been great. I get up 10 minutes before my alarm clock every morning and I look forward to seeing my instructors and classmates. There are so many people in the class that I revel in learning something new about them every day. There are fun team-building exercises and plenty opportunities to get to know each other better &ndash; &ldquo;lunch! oh yes, lunch!&rdquo; But that&rsquo;s not the whole story.</p>
+
+<p>The 12-week immersive program is definitely intense. I have to be honest, it&rsquo;s been a really trying few weeks for me. While there are 4-weeks of prework to complete, it hasn&rsquo;t prepared me for what was to come. Bear in mind that I walked into this as a non-programmer with a geeky techie penchant.</p>
+
+<p>What I&rsquo;m learning, after interacting with other students, is that this type of course attracts many of a certain kind of person: the A-type.  So let me digress for a moment. What&rsquo;s an A-type person you ask? Well, in my interpretation we&rsquo;re looking at a set of a highly competitive, high strung, multi-tasking, impatient and workaholic types. Now let me ask you this. You take a whole bunch of people like this, put them in classroom and tell them not to compete against each other&hellip; and what do you get? You get a bunch of people gauging the rate of their learning against everyone else&rsquo;s, which translates to: [fingers spelling out &ldquo;L&rdquo; on my forehead].</p>
+
+<p>We&rsquo;re all strongly encouraged not to do this. But do we do that? Of course not. We go home, cry on our pillows and wonder why we&rsquo;re such idiots (or maybe I&rsquo;m just speaking for myself). The funny thing is that every person I&rsquo;ve talked to claims to be the most behind in their learning. Seriously. We&rsquo;ve come to the point that we&rsquo;re even competing on who&rsquo;s the most behind. I think I&rsquo;ve made my point on personality type.</p>
+
+<p>Anyway, what I&rsquo;ve learned through this process is that learning how to program is challenging for many reasons, few of which are technical. Given the time and the inclination, I believe that anyone who puts their mind to learning any topic will eventually learn it. The challenge of this program is entirely affected by one factor: time. Can you learn it fast enough?  This means battling your own ego on a daily basis, and learning how to deal with your frustrations.</p>
+
+<p>I&rsquo;m not going to pretend that I woke up one morning and everything magically became easy peasy lemon squeezy. It&rsquo;s only week 4 and there&rsquo;s a long way to go. Things are gradually getting better mostly through my own efforts. So here are some key take-aways: take ownership of your learning status (did I do all the homework? did I suffer the blank screen glare until I found a solution, or did I ride someone else&rsquo;s coat tails?), stop comparing yourself against others (yeah, right), and chill the f*ck out (there are worse things that could be happening in your life). Savor those &ldquo;yessss&rdquo; moments when you figure out the most elementary things.  And remember that at the end of the day, it gets better&hellip; albeit incrementally.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Learn Ruby online]]></title>
+    <link href="http://laptite.github.io/blog/2013/06/16/learn-ruby-online/"/>
+    <updated>2013-06-16T22:23:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/06/16/learn-ruby-online</id>
+    <content type="html"><![CDATA[<p><img src="/images/term-ruby.jpg" width="375" height="281" title="[Skillshare pic]" ><br>
+Source: Skillcrush</p>
+
+<p>I&rsquo;m the kind of person that likes books with pictures. I also tend to learn best by observing and grasping patterns.  So lucky for me, there are a number of interactive Ruby learning tools available to suit different learning styles.  I haven&rsquo;t yet checked all of these out, so this post is part review and part reminder.</p>
+
+<p><strong><a href="http://tryruby.org">TryRuby</a></strong><br>
+TryRuby is the most adorable browser-based learning tool ever. It&rsquo;s hosted by CodeSchool. I love the super-cute storybook layout and characters. I first tried this out about 6 months ago and while it was very easy to follow, I didn&rsquo;t really understand what I was doing or why. At the end of the module I didn&rsquo;t get the point of what I had just done. That said, TryRuby is so irresistible that you <em>will</em> start typing Ruby.</p>
+
+<p><strong><a href="http://rubykoans.com">RubyKoans</a></strong><br>
+I love the concept of RubyKoans. It&rsquo;s not browser-based. Instead you download a folder of ruby files and you go onto to follow a &ldquo;path to enlightenment.&rdquo; Having already learned the basics of Ruby, I&rsquo;ve found this game to be very helpful in reinforcing what I&rsquo;ve already learned to-date. It&rsquo;s definitely helped me get a handle on some weaknesses.  I wouldn&rsquo;t recommend this to a complete programming newbie.  This learning tool requires some familiarity with both a text editor and your terminal.</p>
+
+<p><strong><a href="http://www.rubeque.com">Rubeque</a></strong><br>
+I just heard about this one, and I really think this is going to help me hone my skills. Last week I didn&rsquo;t even know what an enumerable was, but this week I&rsquo;m ready to throw on the punching gloves! This browser-based tool gets you to &ldquo;hone your skills by solving small Ruby programs while competing against other Rubyists&rdquo;. Challenges are listed in a table, which you can filter by level of difficulty. Awesome. Did someone just turn on the music? It&rsquo;s the Eye of the Tiger, baby. Bring it on biznitch!</p>
+
+<p><strong><a href="https://github.com/ryanb/ruby-warrior">Ruby warrior</a></strong>
+While I fondly remember Adventure games of days gone by, I could never figure out what the heck word I was supposed to use to move forward. I sucked so bad at those games. This said I can&rsquo;t wait to try this one. Go to this git repo and get instructions on installing the gem and then it&rsquo;s off to the races. You&rsquo;re a warrior climbing a tall tower in search of a precious Ruby at the very top. To get to the next floor, you need to write Ruby script for the warrior to battle enemies, rescue captives, and reach the stairs. Sweet.</p>
+
+<p><strong><a href="http://hackety.com">Hackety Hack</a></strong><br>
+All these interactive tools have me so spoiled. You watch video, a cute cartoon, compete against each other and role-play. As Tony the Tiger would say &ldquo;It&rsquo;s grrrrreat!&rdquo; So honestly Hackety Hack, what are you thinking making me read words? Plus, I have to install an application that takes space on my hard drive? I don&rsquo;t think so homey.</p>
+
+<p><strong><a href="http://railsforzombies.org">RailsforZombies</a></strong><br>
+Classic learning tool by Codeschool to learn rails. Zombies and learning challenges: what more do you need? I&rsquo;d write more but I haven&rsquo;t finished it yet.</p>
+
+<p><strong><a href="http://rubymonk.com">RubyMonk</a></strong><br>
+I haven&rsquo;t tried this one yet but if Ruby&rsquo;s creator Yukihiro Matsumoto says he likes it, well then I&rsquo;m just going to have to go ahead and try it.</p>
+
+<p>Reference: <a href="https://speakerdeck.com/samnang/interactive-ruby-learning">https://speakerdeck.com/samnang/interactive-ruby-learning</a></p>
 ]]></content>
   </entry>
   

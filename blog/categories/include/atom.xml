@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: include | My Little Blog]]></title>
+  <link href="http://laptite.github.io/blog/categories/include/atom.xml" rel="self"/>
+  <link href="http://laptite.github.io/"/>
+  <updated>2013-09-04T15:15:46-04:00</updated>
+  <id>http://laptite.github.io/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby & Me: include vs other includes]]></title>
+    <link href="http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include/"/>
+    <updated>2013-09-03T23:01:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include</id>
+    <content type="html"><![CDATA[<p>The beautiful thing about ruby is that it wants to be expressive and legible &ndash; it aims to mimic human language. Unfortunately human language is not that consistent. Words are not used the same way all the time because usage is often driven by context. The good news is that Ruby makes some allowances for this and provides different ways (aka methods) to help us be more explicit in our programming.</p>
+
+<p>For example, &lsquo;map&rsquo; is a method that performs the same job as &lsquo;collect&rsquo;, and there are times when you might find it preferable to specify that values are being collected from a block vs. when they are being mapped. The truth is though that &lsquo;map&rsquo; has been historically used in functional programming, and might sometimes be used to please the habitual self over semantic purpose.</p>
+
+<p>So there we have it. Po-TAY-toh Po-TAH-toh&hellip; but this is America and we say Po-TAY-toh! Seriously though, it&rsquo;s best to use whatever language helps you and others easily read your code. But what happens when terms are the same, or overlap between Ruby and Rails?</p>
+
+<p>I was recently asked to explain what <strong>include</strong> does in Rails, and the first thing that came to mind was the ruby method include?(obj) &ndash; a boolean method that returns true if the given object is present in self:</p>
+
+<pre><code>grades = ["A", "C+", "B-"]
+grades.include?("A") #=&gt; true
+grades.include?("F") #=&gt; false
+</code></pre>
+
+<p>But &lsquo;include?&rsquo;&lsquo; is a ruby method, and the question specified Rails. Hm. Well, I&rsquo;ve used 'include&rsquo; in Ruby to mix in module instance methods, but I simply haven&rsquo;t had to use it in Rails. So later in the day I did what any self-respecting nerd would do, and looked its usage up in RailsGuide. I also asked my classmates and instructor the same question. Sample responses included: like where in Rails? in a mixin? a module? in eager loading? what do you mean?</p>
+
+<p>As Tony the Tiger says: grrreat.</p>
+
+<p>This post briefly explores the various uses of a similarly named method between Ruby (1.9.3) and Rails (3.2.13), using the variations of &ldquo;include&rdquo; as an example. The include method is not by any means the most exciting one, but it is one that is commonly used in different contexts.</p>
+
+<p>In Ruby, many methods such as <strong>include?</strong> can be similarly applied to various contexts with slight variations:</p>
+
+<pre><code>array.include?(true_if_this_object_is_present_in_array)
+  [1,2,3,4].include?(2) #=&gt; true
+  [1,2,3,4].include?(5) #=&gt; false
+
+hash.include?(true_if_this_key_is_present_in_hash)
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:name) #=&gt; true
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:gender) #=&gt; false
+
+"string".include?(true_if_this_string_or_character_is_present_in_string)
+  "hello".include?("el") #=&gt; true
+  "hello".include?("pi") #=&gt; false
+
+(range "this".."that").include?(true_if_this_object_is_an_element_of_range)
+  (34..76).include?(38) #=&gt; true
+  (34..76).include?(14) #=&gt; false
+
+environment_variable.include?(true_if_there_is_an_environment_variable_with_this_name)
+  PATH = "/Users/LittleApple/.rvm/gems/ruby-1.9.3-p429/bin"
+  ENV['PATH'].include?('bin') #=&gt; true
+  ENV['PATH'].include?('BigApple') #=&gt; false
+
+module.include?(true_if_this_module_is_present_in_the_module_or_one_of_the_module's_ancestors)
+  module Granny
+  end
+
+  class Mama
+    include Granny
+  end
+
+  class Baby &lt; Mama
+  end
+
+  Mama.include?(Granny)   #=&gt; true
+  Baby.include?(Granny)   #=&gt; true
+  Granny.include?(Granny) #=&gt; false
+</code></pre>
+
+<p>There are Public Class methods, Private Class methods, Module methods, Enumerable methods, and so on. This leads to some additional variations on the usage of &lsquo;include&rsquo; in Ruby:</p>
+
+<pre><code>Module.include(module, ...) 
+  #=&gt; used to mix module constants, methods, and variables into the Module or class instances.
+
+Module.included_modules 
+  #=&gt; returns an array list of modules that are included in Module.
+
+Module.included(other_module)
+  Module Hello
+    def Hello.included(other_module)
+      (...) 
+    end
+  end
+
+  Module
+    include Hello
+  end
+  #=&gt; callback is invoked when the (receiver) is included in another module or class. 
+</code></pre>
+
+<p>Moving onto Rails.</p>
+
+<p>ActiveRecord in Rails is an object relational mapping system that lets you retrieve objects from your database using queries that execute as SQL, without actually having to write raw SQL. Includes is one of the many finder methods available in ActiveRecord that helps minimize the number of queries run against your database.</p>
+
+<p>With the includes method, all associations can be specified in advance by passing arguments. This act of preloading is also known as eager loading, and is how ActiveRecord tackles N+1 &ndash; a problem that occurs with associations. When you load the parent object and start loading one child or association at a time, you end up having to run N+1 queries. Pre-loading associations minimizes the number of queries by way of its specificity:</p>
+
+<pre><code>School.includes("students").where(first_name: 'Ryan', students: {status: 'accepted'}).count
+</code></pre>
+
+<p>The includes method can come in handy when you want to display the same information in multiple views but don&rsquo;t want to bog down performance by repeatedly running the same query. To provide even more flexibility, Rails has an :include option for those times that a different finder method might be better suited to your query, but you still want to eager load associations.</p>
+
+<p>Since Rails runs on the Ruby programming language, the various &lsquo;include&rsquo; ruby class and module methods can be used to respectively drive object behavior or refer to modules, mix-ins or concerns.</p>
+
+<p>So there you have it. The many wonderful uses of the term &lsquo;include&rsquo;.</p>
+]]></content>
+  </entry>
+  
+</feed>
