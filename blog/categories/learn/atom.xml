@@ -4,7 +4,7 @@
   <title><![CDATA[Category: learn | My Little Blog]]></title>
   <link href="http://laptite.github.io/blog/categories/learn/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-06-17T00:36:35-04:00</updated>
+  <updated>2013-09-09T17:16:33-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,26 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[It gets better]]></title>
+    <link href="http://laptite.github.io/blog/2013/06/26/it-gets-better/"/>
+    <updated>2013-06-26T16:05:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/06/26/it-gets-better</id>
+    <content type="html"><![CDATA[<p><img class="left" src="/images/yessss.jpg" width="300" height="300" title="[Pixel Img]" >
+We&rsquo;re closing in on the 4th week of Flatiron School and so far it&rsquo;s been great. I get up 10 minutes before my alarm clock every morning and I look forward to seeing my instructors and classmates. There are so many people in the class that I revel in learning something new about them every day. There are fun team-building exercises and plenty opportunities to get to know each other better &ndash; &ldquo;lunch! oh yes, lunch!&rdquo; But that&rsquo;s not the whole story.</p>
+
+<p>The 12-week immersive program is definitely intense. I have to be honest, it&rsquo;s been a really trying few weeks for me. While there are 4-weeks of prework to complete, it hasn&rsquo;t prepared me for what was to come. Bear in mind that I walked into this as a non-programmer with a geeky techie penchant.</p>
+
+<p>What I&rsquo;m learning, after interacting with other students, is that this type of course attracts many of a certain kind of person: the A-type.  So let me digress for a moment. What&rsquo;s an A-type person you ask? Well, in my interpretation we&rsquo;re looking at a set of a highly competitive, high strung, multi-tasking, impatient and workaholic types. Now let me ask you this. You take a whole bunch of people like this, put them in classroom and tell them not to compete against each other&hellip; and what do you get? You get a bunch of people gauging the rate of their learning against everyone else&rsquo;s, which translates to: [fingers spelling out &ldquo;L&rdquo; on my forehead].</p>
+
+<p>We&rsquo;re all strongly encouraged not to do this. But do we do that? Of course not. We go home, cry on our pillows and wonder why we&rsquo;re such idiots (or maybe I&rsquo;m just speaking for myself). The funny thing is that every person I&rsquo;ve talked to claims to be the most behind in their learning. Seriously. We&rsquo;ve come to the point that we&rsquo;re even competing on who&rsquo;s the most behind. I think I&rsquo;ve made my point on personality type.</p>
+
+<p>Anyway, what I&rsquo;ve learned through this process is that learning how to program is challenging for many reasons, few of which are technical. Given the time and the inclination, I believe that anyone who puts their mind to learning any topic will eventually learn it. The challenge of this program is entirely affected by one factor: time. Can you learn it fast enough?  This means battling your own ego on a daily basis, and learning how to deal with your frustrations.</p>
+
+<p>I&rsquo;m not going to pretend that I woke up one morning and everything magically became easy peasy lemon squeezy. It&rsquo;s only week 4 and there&rsquo;s a long way to go. Things are gradually getting better mostly through my own efforts. So here are some key take-aways: take ownership of your learning status (did I do all the homework? did I suffer the blank screen glare until I found a solution, or did I ride someone else&rsquo;s coat tails?), stop comparing yourself against others (yeah, right), and chill the f*ck out (there are worse things that could be happening in your life). Savor those &ldquo;yessss&rdquo; moments when you figure out the most elementary things.  And remember that at the end of the day, it gets better&hellip; albeit incrementally.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Learn Ruby online]]></title>

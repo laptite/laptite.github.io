@@ -4,7 +4,7 @@
   <title><![CDATA[My Little Blog]]></title>
   <link href="http://laptite.github.io/atom.xml" rel="self"/>
   <link href="http://laptite.github.io/"/>
-  <updated>2013-06-17T00:36:35-04:00</updated>
+  <updated>2013-09-09T17:16:33-04:00</updated>
   <id>http://laptite.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,768 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby & Me: include vs other includes]]></title>
+    <link href="http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include/"/>
+    <updated>2013-09-03T23:01:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/way.jpg" width="298" height="235" title="[Pixel Img]" >
+The beautiful thing about ruby is that it wants to be expressive and legible &ndash; it aims to mimic human language. Unfortunately human language is not that consistent. Words are not used the same way all the time because usage is often driven by context. The good news is that Ruby makes some allowances for this and provides different ways (aka methods) to help us be more explicit in our programming.</p>
+
+<p>For example, &lsquo;map&rsquo; is a method that performs the same job as &lsquo;collect&rsquo;, and there are times when you might find it preferable to specify that values are being collected from a block vs. when they are being mapped. The truth is though that &lsquo;map&rsquo; has been historically used in functional programming, and might sometimes be used to please the habitual self over semantic purpose.</p>
+
+<p>So there we have it. Po-TAY-toh Po-TAH-toh&hellip; but this is America and we say Po-TAY-toh! Seriously though, it&rsquo;s best to use whatever language helps you and others easily read your code. But what happens when terms are the same, or overlap between Ruby and Rails?</p>
+
+<p>I was recently asked to explain what <strong>include</strong> does in Rails, and the first thing that came to mind was the ruby method include?(obj) &ndash; a boolean method that returns true if the given object is present in self:</p>
+
+<pre><code>grades = ["A", "C+", "B-"]
+grades.include?("A") #=&gt; true
+grades.include?("F") #=&gt; false
+</code></pre>
+
+<p>But &lsquo;include?&rsquo;&lsquo; is a ruby method, and the question specified Rails. Hm. Well, I&rsquo;ve used &#8216;include&rsquo; in Ruby to mix in module instance methods, but I simply haven&rsquo;t had to use it in Rails. So later in the day I did what any self-respecting nerd would do, and looked its usage up in RailsGuide. I also asked my classmates and instructor the same question. Sample responses included: like where in Rails? in a mixin? a module? in eager loading? what do you mean?</p>
+
+<p>As Tony the Tiger says: grrreat.</p>
+
+<p>This post briefly explores the various uses of a similarly named method between Ruby (1.9.3) and Rails (3.2.13), using the variations of &ldquo;include&rdquo; as an example. The include method is not by any means the most exciting one, but it is one that is commonly used in different contexts.</p>
+
+<p>In Ruby, many methods such as <strong>include?</strong> can be similarly applied to various contexts with slight variations:</p>
+
+<pre><code>array.include?(true_if_this_object_is_present_in_array)
+  [1,2,3,4].include?(2) #=&gt; true
+  [1,2,3,4].include?(5) #=&gt; false
+
+hash.include?(true_if_this_key_is_present_in_hash)
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:name) #=&gt; true
+  {:name =&gt; "Bob", :age =&gt; 25}.include?(:gender) #=&gt; false
+
+"string".include?(true_if_this_string_or_character_is_present_in_string)
+  "hello".include?("el") #=&gt; true
+  "hello".include?("pi") #=&gt; false
+
+(range "this".."that").include?(true_if_this_object_is_an_element_of_range)
+  (34..76).include?(38) #=&gt; true
+  (34..76).include?(14) #=&gt; false
+
+environment_variable.include?(true_if_there_is_an_environment_variable_with_this_name)
+  PATH = "/Users/LittleApple/.rvm/gems/ruby-1.9.3-p429/bin"
+  ENV['PATH'].include?('bin') #=&gt; true
+  ENV['PATH'].include?('BigApple') #=&gt; false
+
+module.include?(true_if_this_module_is_present_in_the_module_or_one_of_the_module's_ancestors)
+  module Granny
+  end
+
+  class Mama
+    include Granny
+  end
+
+  class Baby &lt; Mama
+  end
+
+  Mama.include?(Granny)   #=&gt; true
+  Baby.include?(Granny)   #=&gt; true
+  Granny.include?(Granny) #=&gt; false
+</code></pre>
+
+<p>There are Public Class methods, Private Class methods, Module methods, Enumerable methods, and so on. This leads to some additional variations on the usage of &lsquo;include&rsquo; in Ruby:</p>
+
+<pre><code>Module.include(module, ...) 
+  #=&gt; used to mix module constants, methods, and variables into the Module or class instances.
+
+Module.included_modules 
+  #=&gt; returns an array list of modules that are included in Module.
+
+Module.included(other_module)
+  Module Hello
+    def Hello.included(other_module)
+      (...) 
+    end
+  end
+
+  Module
+    include Hello
+  end
+  #=&gt; callback is invoked when the (receiver) is included in another module or class. 
+</code></pre>
+
+<p>Moving onto Rails.</p>
+
+<p>ActiveRecord in Rails is an object relational mapping system that lets you retrieve objects from your database using queries that execute as SQL, without actually having to write raw SQL. Includes is one of the many finder methods available in ActiveRecord that helps minimize the number of queries run against your database.</p>
+
+<p>With the includes method, all associations can be specified in advance by passing arguments. This act of preloading is also known as eager loading, and is how ActiveRecord tackles N+1 &ndash; a problem that occurs with associations. When you load the parent object and start loading one child or association at a time, you end up having to run N+1 queries. Pre-loading associations minimizes the number of queries by way of its specificity:</p>
+
+<pre><code>School.includes("students").where(first_name: 'Ryan', students: {status: 'accepted'}).count
+</code></pre>
+
+<p>The includes method can come in handy when you want to display the same information in multiple views but don&rsquo;t want to bog down performance by repeatedly running the same query. To provide even more flexibility, Rails has an :include option for those times that a different finder method might be better suited to your query, but you still want to eager load associations.</p>
+
+<p>Since Rails runs on the Ruby programming language, the various &lsquo;include&rsquo; ruby class and module methods can be used to respectively drive object behavior or refer to modules, mix-ins or concerns.</p>
+
+<p>So there you have it. The many wonderful uses of the term &lsquo;include&rsquo;.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby & Me: Converting roman numerals to arabic]]></title>
+    <link href="http://laptite.github.io/blog/2013/08/24/numerals/"/>
+    <updated>2013-08-24T11:45:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/08/24/numerals</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/FS_grad.jpg" width="256" height="192" title="[Pixel Img]" ></p>
+
+<p>Yesterday was a big day. I graduated from the FlatironSchool 12-week program (yay! applause).</p>
+
+<p>It&rsquo;s been an intense race to pack in as much knowledge as possible in a short time-frame. As a parting gift, we were given an appropriate signifier that we are now versatile web application developers: a swiss army knife.</p>
+
+<p>In recent weeks, it&rsquo;s been difficult not to notice time ticking away against our task list: <br>
+&ndash; Absorb knowledge<br>
+&ndash; Complete web application for ScienceFair<br>
+&ndash; Absorb knowledge<br>
+&ndash; Practice ruby problems in preparation for Interviews<br>
+&ndash; Absorb knowledge<br>
+&ndash; Ask for 11th-hour lectures to make sure we understand topic xyz<br>
+&ndash; Absorb knowledge<br></p>
+
+<p>In the end, as a coping mechanism, my peers and I decided that it was best to look at graduation not as the end of the road but as a new beginning. I&rsquo;m happy to say that I&rsquo;ve made it through the program. I&rsquo;m also happy to report that I&rsquo;ve largely absorbed most of my newfound knowledge.</p>
+
+<p>The harrowing schedule has made it difficult for many of us to keep up with our blogs, but I&rsquo;m ready and raring to go. So, I&rsquo;ve decided to start a new segment called &lsquo;Ruby &amp; Me&rsquo; to a) force me to review my notes, b) test my understanding of basic concepts, and c) document my thought process as I work through problems. The immediate result may not be pretty, but this is what the result looks like short of refactoring. In the words of our Dean, Avi Flombaum: Make it work &ndash; Make it right &ndash; Make it fast. Then and only then: refactor.</p>
+
+<p><strong>Problem: Convert roman numerals to arabic</strong></p>
+
+<p>I&rsquo;ve learned the hard way that it&rsquo;s paralyzing to look too far ahead. Small successes are productive and feel great. So, I start with the following pseudo-code:</p>
+
+<pre><code># Convert roman numerals to arabic:
+# I, V, X, L, C, D, M
+# NumTranslator.new("V") return arabic numeral value 5
+</code></pre>
+
+<p>My first goal is to create a class in which I can instantiate a new object and successfully pass my roman numeral between methods. By the way, I&rsquo;ve also learned the hard way that too much coding without testing is a recipe for disaster. The last thing I want is to get bogged down debugging my code, but I&rsquo;ve done it before&hellip; a lot. So, let&rsquo;s see how this works out:</p>
+
+<pre><code>class NumTranslator
+  def initialize(roman_numeral)
+    @numeral = roman_numeral
+  end
+
+  def translator
+    @numeral = "V" 
+  end
+end
+puts NumTranslator.new("V").translator
+
+return value #=&gt; V
+</code></pre>
+
+<p>My first test passes. Awesome! Now I want to setup a simple translator that deals with all single-digit roman numerals:</p>
+
+<pre><code>def translator
+    case @numeral
+    when "I" then 1
+    when "V" then 5
+    when "X" then 10
+    when "L" then 50
+    when "C" then 100
+    when "D" then 500
+    when "M" then 1000
+    else
+    puts "Please enter a roman numeral"
+  end 
+end
+puts NumTranslator.new("V").translator
+
+return value #=&gt; 5
+</code></pre>
+
+<p>Second test passes. Cool. Now I want to make sure that my full translation table works so I modify my call to accept user input:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).translator
+</code></pre>
+
+<p>At this point I realize that I should probably help guard my entries from my lightning fingers.</p>
+
+<pre><code>def initialize(roman_numeral)
+  @numeral = roman_numeral.upcase
+end
+</code></pre>
+
+<p>Sweet, now I can mistakenly enter a lowercase letter and it will automatically be upcased.</p>
+
+<p>Now comes the tough part. Translation is easy at a single digit level, but if I enter a multiple digit roman numeral, I get the following response: &ldquo;Please enter a roman numeral&rdquo;. It&rsquo;s time to alter my method so that I can deal with multiple letter roman numerals. I know that adjacent numerals sum to a total value e.g. &ldquo;III&rdquo; = 3. I also know that there are exceptions but I choose to ignore those for now.</p>
+
+<p>Since each digit within a roman numeral translates to a value, I decide to update my translator method to split the input string and see if I can get &ldquo;III&rdquo; to return 3. I decide to use the collect method because I want to add each letter to an array. This will allow me to iterate through and add up all the values.</p>
+
+<pre><code>def translator
+  @numeral = @numeral.split('').collect do |letter|
+    case letter
+    when "I" then 1
+    when "V" then 5
+    when "X" then 10
+    when "L" then 50
+    when "C" then 100
+    when "D" then 500
+    when "M" then 1000
+    else
+      puts "Please enter a roman numeral"
+    end
+  end
+  @numeral.inject(:+)
+end
+
+(...)
+
+gets.chomp #=&gt; "III"
+return value #=&gt; 3
+</code></pre>
+
+<p>Excellent! It works. It&rsquo;s time to get happy:</p>
+
+<pre><code>gets.chomp #=&gt; "XI"
+return value #=&gt; 11
+</code></pre>
+
+<p>Yippee!</p>
+
+<pre><code>gets.chomp #=&gt; "LV"
+return value #=&gt; 55
+</code></pre>
+
+<p>Hoorah!</p>
+
+<pre><code>gets.chomp #=&gt; "XX"
+return value #=&gt; 20
+</code></pre>
+
+<p>Woopdeedoo!</p>
+
+<pre><code>gets.chomp #=&gt; "IV"
+return value #=&gt; 6
+</code></pre>
+
+<p>Sigh. Ok, enough prolonging the inevitable. Good thing I&rsquo;ve learned to manipulate my expectations: Yay! Yay! Yay! Waaaah!</p>
+
+<p>Time for more pseudo-code:</p>
+
+<pre><code># Translator method assumes each single-digit character is unique
+# It splits and translates each character into a number, and adds it to an array
+# Exceptions must be converted to a single-digit string and added back to the roman numeral
+# Exceptions: "IV" = "4" / "IX" = "9" / "XL" = "F" (forty) / "XC" = "N" (ninety)
+</code></pre>
+
+<p>The translator method is already crazy long, so it seems appropriate to create a separate method to detect exceptions. I decide to start with &ldquo;IV&rdquo; and &ldquo;IX&rdquo; to keep things simple.</p>
+
+<pre><code>def detect_exception
+  if @numeral.include?("IV")
+    @numeral = @numeral.split("IV").push("4").inject(:+)
+  elsif @numeral.include?("IX")
+    @numeral = @numeral.split("IX").push("9").inject(:+)
+  else
+    @numeral
+  end
+end
+</code></pre>
+
+<p>Let&rsquo;s test this real quick:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).detect_exception
+
+gets.chomp #=&gt; "XXIV"
+return value #=&gt; "XX4"
+</code></pre>
+
+<p>Cool, that works.</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).detect_exception
+
+gets.chomp #=&gt; "LXIX"
+return value #=&gt; "LX9"
+</code></pre>
+
+<p>Awesome. Now I need to figure out how to expand this to include the other exceptions. I find that I can&rsquo;t just add these as additional elsif statements because there seems to be confusion with overlapping numerals, so I try to nest them:</p>
+
+<pre><code>def detect_exception
+    if @numeral.include?("IV")
+      @numeral = @numeral.split("IV").push("4").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("IX")
+      @numeral = @numeral.split("IX").push("9").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+    else
+      @numeral
+    end
+  end
+</code></pre>
+
+<p>It&rsquo;s butt ugly, but it works. Only a single line needs to be added to the translator method to call this new method to detect exceptions:</p>
+
+<pre><code>def translator
+  @numeral = self.detect_exception
+  @numeral = @numeral.split('').collect do |letter|
+  (...)
+  end
+end
+</code></pre>
+
+<p>Excellent. Now we just need to test that everything works:</p>
+
+<pre><code>puts "Enter roman numeral to convert to arabic numeral: "
+print NumTranslator.new(gets.chomp).translator
+
+gets.chomp #=&gt; "MMMDXCLXIX"
+return value #=&gt; "3669"
+</code></pre>
+
+<p>I can hardly contain myself. I run about fifteen different number combinations to make sure that everything works. Sweet! Hopefully, I didn&rsquo;t leave out any exceptions.</p>
+
+<p>UPDATE: Special thanks to Ed for pointing out a problem with my nested conditions under detect_exception, and for suggesting saving on real estate by using a hashmap instead of a case statement.</p>
+
+<p>Here&rsquo;s the final code:</p>
+
+<pre><code>class NumTranslator
+
+  def initialize(roman_numeral)
+    @numeral = roman_numeral.upcase
+  end
+
+  def detect_exception
+    if @numeral.include?("IV")
+      @numeral = @numeral.split("IV").push("4").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("IX")
+      @numeral = @numeral.split("IX").push("9").inject(:+)
+      if @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+      else
+      @numeral
+      end
+    elsif @numeral.include?("XL")
+      @numeral = @numeral.split("XL").push("F").inject(:+)
+      elsif @numeral.include?("XC")
+      @numeral = @numeral.split("XC").push("N").inject(:+)
+    else
+      @numeral
+    end
+  end
+
+  def translator
+    hashmap = {"I"=&gt;1,"4"=&gt;4,"V"=&gt;5,"9"=&gt;9,"X"=&gt;10,"F"=&gt;40,"L"=&gt;50,"N"=&gt;90,"C"=&gt;100,"D"=&gt;500,"M"=&gt;1000}
+    @numeral = self.detect_exception
+    @numeral = @numeral.split('').collect do |numeral|
+      hashmap[numeral]
+    end
+    @numeral.inject(:+)  
+  end
+end
+puts "Enter roman numeral to convert to arabic numeral: "
+puts NumTranslator.new(gets.chomp).translator
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rails deployment to digital ocean ubuntu via capistrano]]></title>
+    <link href="http://laptite.github.io/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano/"/>
+    <updated>2013-08-13T18:58:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/holy-cow.png" width="194" height="187" title="[Pixel Img]" >
+We are in the 11th week of Flatiron School. It has been a whirlwind of learning, and it feels great to finally deploy our first Rails app today. Deployment was painful, so I&rsquo;m posting this walk-through in hopes that it might save someone some deployment time. My team started this process with high hopes of crushing it in 45 minutes. Instead we ran into all sorts of annoying problems to debug for the next 3 hours (ugh!).</p>
+
+<p>Some hurdles that were overcome and that are discussed in this post are: asset pre-compilation errors, Sunspot solr gem headaches, Database not seeding, and image_tag &lsquo;isn&rsquo;t precompiled&rsquo; error message.</p>
+
+<p>This walk-through builds on an excellent tutorial by guest speaker <a href="https://github.com/spikegrobstein/flatironschool-deployment_lecture/blob/master/lecture.md">Spike Grobstein</a>. My intent is not to plagiarize any of that work, but instead to add in some steps that were needed for me to get our application deployed and working.</p>
+
+<p>We were provided the following information by our TA Blake: (a) Digital Ocean droplet to serve our app, and (b) credentials (IP Address / Username: root / Password). He then sent us packing to work on our own because he&rsquo;s a meanie (just kidding). One skill you&rsquo;ll sharpen while in this program is your ability to walk in the dark. Not to worry though. There is light to be found for those who persevere. Anyway, I digress.</p>
+
+<p>Before you start anything you&rsquo;ll want to make sure that all working git branches are up-to-date, reviewed, merged and pushed up to master accordingly.  This may not be a big concern if you&rsquo;re working solo, but a critical step for our team of four sharing workload.</p>
+
+<p>Open terminal, cd into your Rails app and let&rsquo;s get ready to rumble.</p>
+
+<p><strong>PHASE 1: Connect to your spankin&#8217; new server</strong><br>
+<em>In the code base a hashtag # represents a comment, so don&rsquo;t type it &ndash; ok?</em></p>
+
+<p>Connect to your new server via SSH:</p>
+
+<pre><code>ssh root@XXX.XXX.XXX.XXX # plug your IP address in the place of the X's
+</code></pre>
+
+<p>Answer questions politely:</p>
+
+<pre><code>Are you sure you want to continue connecting (yes/no)? # type yes and press enter
+</code></pre>
+
+<p>Root is a super user, so you should really create a user for the app since it brings bad mojo on top of 7 years of bad luck to do otherwise &ndash; it&rsquo;s bad practice, so don&rsquo;t be that person:</p>
+
+<pre><code>useradd -s /bin/bash -G sudo -m outlinked # note: our app is called "outlinked", enter username.
+</code></pre>
+
+<p>Then you have to create a password for this user, but you won&rsquo;t be entering the password right away. You&rsquo;re going to tell the server which username you want to apply the password to:</p>
+
+<pre><code>passwd outlinked
+</code></pre>
+
+<p>When prompted for a password, choose one and confirm it.</p>
+
+<p>Groovy, now exit the server and connect as your alter-ego (aka your new username):</p>
+
+<pre><code>ssh outlinked@XXX.XXX.XXX.XXX # you know what to do with these X's now
+</code></pre>
+
+<p>Enter your password, and get ready to install the packages your app will need to run on your Ubuntu server.</p>
+
+<p><strong>PHASE 2: Get your server ready for your awesome application</strong></p>
+
+<p>Update your apt-repository and dependencies with this code:</p>
+
+<pre><code>sudo apt-get update
+</code></pre>
+
+<p>Then upgrade all installed packages with this code:</p>
+
+<pre><code>sudo apt-get upgrade
+</code></pre>
+
+<p>You&rsquo;ll be shown a list of packages that need upgrading, and then asked to confirm. Be polite and answer in the affirmative:</p>
+
+<pre><code>Y # press enter
+</code></pre>
+
+<p>Install build essential package:</p>
+
+<pre><code>sudo apt-get install build-essential
+</code></pre>
+
+<p>Install Ruby packages:</p>
+
+<pre><code>sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby1.9.1 libsqlite3-dev
+</code></pre>
+
+<p>Install Git:</p>
+
+<pre><code>sudo apt-get install git
+</code></pre>
+
+<p>Install XML libraries (this one is for gems using the stated libs e.g. Nokogiri):</p>
+
+<pre><code>sudo apt-get install libxml2-dev libxslt1-dev
+</code></pre>
+
+<p>Install Gem Bundler:</p>
+
+<pre><code>sudo gem install bundler
+</code></pre>
+
+<p>Install SQLite3:</p>
+
+<pre><code>sudo gem install sqlite3
+</code></pre>
+
+<p>Install nodejs (avoids compile errors with the Javascript framework):</p>
+
+<pre><code>sudo apt-get install nodejs
+</code></pre>
+
+<p>Install Capistrano, which you&rsquo;ll be using to deploy your app:</p>
+
+<pre><code>gem install capistrano
+</code></pre>
+
+<p>Install Passenger, which is an nginx module and your Rack webserver:</p>
+
+<pre><code>sudo gem install passenger
+sudo passenger-install-nginx-module
+sudo apt-get install libcurl4-openssl-dev libssl-dev zlib1g-dev
+sudo nano /opt/nginx/conf/nginx.conf # configure nginx
+# scroll through the nano file looking for #user  nobody;
+# uncomment that, and change nobody; to www-data;
+# keep scrolling and find the location block now
+# Replace the whole block:
+  location / {
+   root   html;
+  index  index.html index.htm;
+  }
+# with:
+  root /home/USERNAME/APPNAME/current/public;
+  passenger_enabled on;
+# Exit the editor (Ctrl + X)
+sudo ln -s /opt/nginx/sbin/nginx /usr/local/sbin/
+sudo nginx # Start nginx
+(To stop ngingx: sudo nginx -s stop)
+</code></pre>
+
+<p>Congratulations, you&rsquo;re well on your way to making your app dreams a reality!</p>
+
+<p><strong>PHASE 3: Application config files &amp; Deployment</strong></p>
+
+<p>Go ahead an open a new terminal tab so that you can cd back into your application&rsquo;s repo on your local drive. All Capistrano needs for you to type in the command line to start the deployment process is:</p>
+
+<pre><code>capify .
+</code></pre>
+
+<p>Excellent, let&rsquo;s update a few settings in our application to enable deployment.</p>
+
+<p>Navigate to the config directory, open deploy.rb and edit it as follows:</p>
+
+<pre><code>set :application, "outlinked" # Set application to USERNAME
+
+# Enter your github ssh handle (the https one didn't work for us)
+set :repository,  "git@github.com:flatiron-school/library-redux.git"
+
+set :user, 'outlinked' # Set user to USERNAME
+
+set :deploy_to, "/home/outlinked/outlinked" # Set deploy_to to /home/USERNAME/APPLICATION
+
+set :user_sudo, false
+
+set :rails_env, "production" # sets your server environment to Production mode
+
+set :scm, :git  # sets version control
+
+default_run_options[:pty] = true
+
+role :web, "XXX.XXX.XXX.XXX" # Your HTTP server, Apache/etc
+role :app, "XXX.XXX.XXX.XXX" # We made the app role the same as our `Web` server 
+
+# We made the database role the same as our our `Web` server 
+role :db,  "XXX.XXX.XXX.XXX", :primary =&gt; true # This is where Rails migrations will run
+
+# We're using Passenger mod_rails, so we uncommented this:
+namespace :deploy do
+  task :start do ; end
+  task :stop do ; end
+  task :restart, :roles =&gt; :app, :except =&gt; { :no_release =&gt; true } do
+    run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+  end
+end
+</code></pre>
+
+<p>Cool. We&rsquo;re getting closer to the promise land.</p>
+
+<p>Now go into your Capfile in your application, and uncomment the following:</p>
+
+<pre><code>load 'deploy/assets' # this will precompile your assets every time you deploy
+</code></pre>
+
+<p>Oh yeah, don&rsquo;t forget to add and commit your changes:</p>
+
+<pre><code>git add .
+git commit -am "edit deploy.rb"
+git push
+</code></pre>
+
+<p>My team had to generate a deploy key because our application sits in a private Github repo. If this doesn&rsquo;t apply to you, keep reading because one day you&rsquo;ll need to do this. Switch your terminal tab so that you&rsquo;re back into your server command line and enter this code:</p>
+
+<pre><code>ssh-keygen -t rsa -b 4096 # Leave all requests for passwords blank! 
+                          # Hit enter until no more questions are asked.
+</code></pre>
+
+<p>Now you&rsquo;ll need to open your browser and navigate to your repo in Github. Click on &lsquo;Settings&rsquo; and then on &lsquo;Deploy key&rsquo;, and then finally on &lsquo;Add deploy key&rsquo;. Enter your github password, and go back to your server terminal to retrieve the key to copy/paste into github:</p>
+
+<pre><code>cat ~/.ssh/id_rsa.pub # copy everything from the ssh-rsa to username@host.
+                      # I first opened this file with nano, which only showed a partial key.
+                      # Don't enter a title for the key. Github will use your username.
+</code></pre>
+
+<p>Awesome. Now jump back into your other terminal window where you&rsquo;re in your local repo and run:</p>
+
+<pre><code>cap deploy:setup
+</code></pre>
+
+<p>This connects you to your server, prompts you for your password and creates your directory structure on the server. When you cd into your USERNAME directory in your server, you&rsquo;ll see three sub-directories: current, releases and shared. The current directory is the server equivalent of your application directory in your local directory.</p>
+
+<p>I should mention that a log folder wasn&rsquo;t immediately available in the current directory. This became an issue when I ran into a problem deploying and I couldn&rsquo;t get to my production.log to review error messages. I got help from our TA Joe for this, and there was some light-fingered magic going on, so I don&rsquo;t have exact code to post. My understanding is that the Production.log file in the current directory points via symlink to a log file in the shared directory, which did not exist. You can check this status by doing an <code>ls -l</code> and looking for line items in red.</p>
+
+<p><strong>Guess what? It&rsquo;s time to deploy &ndash; Heck yeah!</strong><br>
+So you&rsquo;ve done like a million steps already and we&rsquo;re just deploying now. Pat yourself on the back and give yourself a high five.</p>
+
+<p>All your changes are committed, right? Cool. You&rsquo;re ready to deploy. From your local repo terminal, enter the magical Capistrano command while singing O Sole Mio:</p>
+
+<pre><code>cap deploy
+</code></pre>
+
+<p>Open your browser, type in your IP address in the url bar <code><a href="http://">http://</a>[your IP]</code></p>
+
+<p>Celebration time, right? Wrong. This is where error messages plagued me.</p>
+
+<p><strong>Important note:</strong> you know all that stuff you have to do in your local Rails app like bundle install and all that jazz? That doesn&rsquo;t magically happen in the server. All the routines required in your local drive, you&rsquo;re going to have to repeat here.</p>
+
+<p><strong>Problem no. 1 &ndash; Sunspot gem</strong>
+We installed this gem so that users can run searches in our app. This gem was a pain in the ass from day one. It runs a Java server and it&rsquo;s been a challenge to update every time we changed seats during pair programming. A good rule of thumb is that whatever you&rsquo;ve had to do to fix problems in your local drive, you&rsquo;ll likely have to repeat in your server environment. For one you have to install a Java environment:</p>
+
+<pre><code>sudo apt-get install openjdk-6-jdk
+</code></pre>
+
+<p>Next you&rsquo;ll need to cd into your app USERNAME/current and do all that other junk that fixes rake errors:</p>
+
+<pre><code>rails g sunspot_rails:install RAILS_ENV='production'
+rake sunspot:solr:start RAILS_ENV='production'
+rake sunspot:reindex RAILS_ENV='production'
+</code></pre>
+
+<p>The reason I&rsquo;m tacking on RAILS_ENV=&lsquo;production&rsquo; at the end of each rake command is that I haven&rsquo;t set up rake tasks in my config file in Rails to default to production mode. I figured this out after numerous failed attempts at seeding. According to my rails console the data was seeding, but it turns out the simple rake command populates the development database and not the production one. Did you know that typing <code>rails c</code> in the server gets you the development database and <code>rails c production</code> gets you the production database? Holy batman, it&rsquo;s a thing! Lesson learned after beating my head against the wall for about an hour.</p>
+
+<p>Time to setup the tables and seed the files:</p>
+
+<pre><code>bundle exec rake db:seed RAILS_ENV='production'
+rake db:migrate RAILS_ENV='production'
+</code></pre>
+
+<p>Restart the server now by typing:</p>
+
+<pre><code>touch tmp/restart.txt # if you get a permissions error: sudo touch tmp/restart.txt
+</code></pre>
+
+<p>Reload your browser and voilà! Did it work? For me it still didn&rsquo;t!</p>
+
+<p>Merde! Pardon my french, but this is wholly aggravating by this time. Thank goodness for TA Ashley for helping me retain my sanity.</p>
+
+<p>Here&rsquo;s the error message I was getting:</p>
+
+<pre><code>ActionView::Template::Error ( isn't precompiled):
+    17: (...)
+    20:   &lt;%= image_tag("#{topic_link.link.user.image}", size: "25x25") %&gt;
+</code></pre>
+
+<p>I was stuck on this Mo-Fo for at least an hour because every new person that swooped in concluded that it was a pre-compiling error. So round and round in circles I went. It turns out that this is a legit Rails issue that was brought up on github/Rails. Thank you Ashley, I&rsquo;m not a complete dope! The story here is this:</p>
+
+<p>My team didn&rsquo;t set a default image for avatars. Instead we just had an erb link in line 20. When there is no image available, there&rsquo;s a nil in this field. This was no big deal in development in our local drive, but in Production mode: no-likey. So we tried to put &lsquo;if statements&rsquo; to by-pass the error, but it didn&rsquo;t like that either. Long story short, we deleted the line in the short-term so that we could complete deployment. Tomorrow, I&rsquo;ll add a default image to my assets, which we can link to if image is nil.</p>
+
+<p>In the meantime? Success is sweet!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Argh Matey: Connecting the dots in Rails]]></title>
+    <link href="http://laptite.github.io/blog/2013/07/10/argh/"/>
+    <updated>2013-07-10T23:39:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/07/10/argh</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/argh.png" width="320" height="208" title="[Pixel Img]" >
+It&rsquo;s been a crazy 5 weeks at the Flatiron School, but things are finally starting to click &ndash; thanks in part to our instructors patiently walking us through a number of examples. While this post might seem trivial to some readers, bear in mind that 5 weeks ago I had TextWrangler installed on my laptop. Ew. I know, like, for realz AND I was practicing stuff like var = x.</p>
+
+<p>Anyway, fast forward to the future: the one exercise that resonated with me was one relating Pirates and Ships. It helped me understand Ruby at a time that I hit a seemingly bottomless pit of &lsquo;why the heck don&rsquo;t I get this stuff?&rsquo; desperation. Plus, it kept me entertained since every sentence invariably ended up with an &ldquo;argh matey&rdquo; in my head.</p>
+
+<p>The good news is that after a few weeks of Ruby and a week of Sinatra, we&rsquo;ve started to delve into Rails. One benefit of learning Sinatra first is that you realize how magical Rails is. Holy Shit it does WHAT for you? Everything?! You just wave your magic wand and friggin&#8217; wha?! Ladies and Gentlemen [drumroll] et voilà [poof] ze app extraordinaire! [applause]</p>
+
+<p>Not exactly.</p>
+
+<p>The bad news is, we had homework due in which we were asked to populate a database and create a simple app based on a previous Sinatra application. How hard could that be? I mean Rails is freakin&#8217; magic after all. Ok, well maybe we also had to scrape data off a website first before.</p>
+
+<p>So (staring down at my laptop) my first question is how do I get data in this thing? At this point, I should mention that until recently, accessing and entering data has been something of a mystery to me. Everyone&rsquo;s debugging and doing params stuff while I can&rsquo;t seem to select the right command in irb that does anything useful &ndash; driving blind at 150mph. Classic. We&rsquo;ll come back to that.</p>
+
+<p>The first thing to grasp about Rails is that the framework is composed of three primary components the: Model, View and Controller. Note that the Model talks to the database using some Rails voodoo called ActiveRecord. I like this handy-dandy diagram because it shows you how the database interacts with the framework. But I hate this image because it confuses my thinking of where to enter my code so that it automagically pulls my data into the database. <img class="right" src="http://laptite.github.io/images/mvc_github.png" width="453"></p>
+
+<p>No worries. There must be some guide that explicitly states how to get your data in, so that you can figuratively link your model, views and controller right? Wrong. Someone tell me why there isn&rsquo;t such as resource within the top 3 search results! I&rsquo;ll tell you why&hellip; like duh, you just setup your models, and then your controller is a basic ruby class and then all you have to do is just populate your database and test it in your views. And if you&rsquo;re having trouble with the data, you just throw in pry-debugger or raise params. Capisce? [blank stare] No.</p>
+
+<p>The first time I used Rails, I peeked into every folder trying to figure out the appropriate place for my database (see my Sublime sidebar below left). Now that I look at it, I feel like I should have been like: &ldquo;Duh, what about the db directory?&rdquo;</p>
+
+<p><img class="left" src="http://laptite.github.io/images/sidebar.png" width="222"></p>
+
+<p>Let me break down my quandary for you. There are plenty search results for &lsquo;Rails database&rsquo; but the best answers show individual chunks of code without stating where it belongs. Some people talk about creating a controller and a model, others create just a model, there are examples on how to create a rake task in the lib directory, and others still enter their code in a seeds.rb file in the db directory. Everyone online has an opinion, and everyone&rsquo;s an expert.</p>
+
+<p>BUT if you just want to play around with Rails to get a hang of it, here&rsquo;s how I recommend you get started once you&rsquo;ve installed Rails.</p>
+
+<p><strong>Step 1 &ndash; Create a new rake application and cd into your application:</strong></p>
+
+<pre><code>&gt; rails new pirates-rails-app
+</code></pre>
+
+<p><strong>Step 2 &ndash; Create two Models (notice that Model title names are always singular):</strong></p>
+
+<pre><code>&gt; rails generate model Ship name:string pirate_id:integer
+</code></pre>
+
+<p>Follow the Rails convention of naming your components properly if you want your app to work properly. In this example we use column name and type, but you could omit this piece <code>[name:string pirate_id:integer]</code> and add whatever columns you like later.</p>
+
+<p>You should have two new ruby class files in the Model directory.</p>
+
+<pre><code>class Pirate &lt; ActiveRecord::Base
+   attr_accessible :location, :name
+end    
+
+class Ship &lt; ActiveRecord::Base
+   attr_accessible :name, :pirate_id
+end
+</code></pre>
+
+<p><strong>Step 3 &ndash; Enter some data to play with in the seed.rb file, which is in the db directory:</strong></p>
+
+<pre><code>ships = Ship.create([{ name: 'Queen Anne\'s Revenge', pirate_id: 1}, {name: 'Barnacle', pirate_id: 2}])
+pirates = Pirate.create([{ location: 'West Indies', name: 'Blackbeard'}, { location: 'Rumrunner Isle', name: 'JackSparrow' }])
+</code></pre>
+
+<p>Enter &lsquo;rails console&rsquo; in the command line to launch Rails irb console. If you can get your data to pass muster here, it should work in the seeds file. This won&rsquo;t work until you run a &lsquo;rake db:migrate&rsquo; to migrate your data into the database. Hold off on this for a little while.</p>
+
+<p><strong>Step 4 &ndash; The easiest way to create a Controller is to generate a scaffold. You&rsquo;ll probably hear all sorts of reasons why you should shun scaffolds, but it&rsquo;s a great way to see how things connect:</strong></p>
+
+<pre><code>&gt; rails generate scaffold Ship
+&gt; rails generate scaffold Pirate
+</code></pre>
+
+<p>Don&rsquo;t just accept this. Look at the code in the controller files to get a feel for why each block exists.</p>
+
+<p><strong>Important!</strong> Notice that controllers are always plural. So be careful if you run &lsquo;rails generate controller pirate<strong>s</strong>&rsquo; instead of scaffold. Don&rsquo;t mess this one up either unless you want your app to break.</p>
+
+<p><strong>Step 5 &ndash; Get in the sandbox and play with your localhost site:</strong></p>
+
+<pre><code>&gt; rake db:migrate 
+  # this migrates your tables to the database
+
+&gt; rake server
+  # this command will rackup a port for you to access your web app
+  # "Starting Rack on port 4000" -&gt; http://localhost:4000/
+
+&gt; rake routes 
+  # this allows you to see what web app routes are available
+</code></pre>
+
+<p>The View files associated with your scaffold and routes are in the view folder. Check them out and add some HTML and some styling. There&rsquo;s a lot more to do, but I found this to be a good start to wrap my head around the concept of MVC and Rails.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[It gets better]]></title>
+    <link href="http://laptite.github.io/blog/2013/06/26/it-gets-better/"/>
+    <updated>2013-06-26T16:05:00-04:00</updated>
+    <id>http://laptite.github.io/blog/2013/06/26/it-gets-better</id>
+    <content type="html"><![CDATA[<p><img class="left" src="http://laptite.github.io/images/yessss.jpg" width="300" height="300" title="[Pixel Img]" >
+We&rsquo;re closing in on the 4th week of Flatiron School and so far it&rsquo;s been great. I get up 10 minutes before my alarm clock every morning and I look forward to seeing my instructors and classmates. There are so many people in the class that I revel in learning something new about them every day. There are fun team-building exercises and plenty opportunities to get to know each other better &ndash; &ldquo;lunch! oh yes, lunch!&rdquo; But that&rsquo;s not the whole story.</p>
+
+<p>The 12-week immersive program is definitely intense. I have to be honest, it&rsquo;s been a really trying few weeks for me. While there are 4-weeks of prework to complete, it hasn&rsquo;t prepared me for what was to come. Bear in mind that I walked into this as a non-programmer with a geeky techie penchant.</p>
+
+<p>What I&rsquo;m learning, after interacting with other students, is that this type of course attracts many of a certain kind of person: the A-type.  So let me digress for a moment. What&rsquo;s an A-type person you ask? Well, in my interpretation we&rsquo;re looking at a set of a highly competitive, high strung, multi-tasking, impatient and workaholic types. Now let me ask you this. You take a whole bunch of people like this, put them in classroom and tell them not to compete against each other&hellip; and what do you get? You get a bunch of people gauging the rate of their learning against everyone else&rsquo;s, which translates to: [fingers spelling out &ldquo;L&rdquo; on my forehead].</p>
+
+<p>We&rsquo;re all strongly encouraged not to do this. But do we do that? Of course not. We go home, cry on our pillows and wonder why we&rsquo;re such idiots (or maybe I&rsquo;m just speaking for myself). The funny thing is that every person I&rsquo;ve talked to claims to be the most behind in their learning. Seriously. We&rsquo;ve come to the point that we&rsquo;re even competing on who&rsquo;s the most behind. I think I&rsquo;ve made my point on personality type.</p>
+
+<p>Anyway, what I&rsquo;ve learned through this process is that learning how to program is challenging for many reasons, few of which are technical. Given the time and the inclination, I believe that anyone who puts their mind to learning any topic will eventually learn it. The challenge of this program is entirely affected by one factor: time. Can you learn it fast enough?  This means battling your own ego on a daily basis, and learning how to deal with your frustrations.</p>
+
+<p>I&rsquo;m not going to pretend that I woke up one morning and everything magically became easy peasy lemon squeezy. It&rsquo;s only week 4 and there&rsquo;s a long way to go. Things are gradually getting better mostly through my own efforts. So here are some key take-aways: take ownership of your learning status (did I do all the homework? did I suffer the blank screen glare until I found a solution, or did I ride someone else&rsquo;s coat tails?), stop comparing yourself against others (yeah, right), and chill the f*ck out (there are worse things that could be happening in your life). Savor those &ldquo;yessss&rdquo; moments when you figure out the most elementary things.  And remember that at the end of the day, it gets better&hellip; albeit incrementally.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Learn Ruby online]]></title>
