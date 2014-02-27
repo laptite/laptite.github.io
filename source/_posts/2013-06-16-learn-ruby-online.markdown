@@ -4,7 +4,7 @@ title: "Learn Ruby online"
 author: "Alisa Chang"
 date: 2013-06-16 22:23
 comments: true
-published: true
+
 categories: [ruby, learn, tutorials, newbie, interactive]
 ---
 {% img /images/term-ruby.jpg 375 281 [Skillshare pic]%}<br>
