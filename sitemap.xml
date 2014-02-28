@@ -2,7 +2,7 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://laptite.github.io/blog/2013/06/05/hello-world/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:27:36-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/blog/2013/06/09/prelude-to-coding/</loc>
@@ -10,42 +10,48 @@
     </url>
     <url>
         <loc>http://laptite.github.io/blog/2013/06/16/learn-ruby-online/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/blog/2013/06/26/it-gets-better/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/blog/2013/07/10/argh/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
     </url>
     <url>
         <loc>
             http://laptite.github.io/blog/2013/08/13/rails-deployment-to-digital-ocean-ubuntu-via-capistrano/
         </loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/blog/2013/08/24/numerals/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
     </url>
     <url>
         <loc>
             http://laptite.github.io/blog/2013/09/03/include-includes-include-included-include/
         </loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-26T21:45:24-05:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://laptite.github.io/blog/2014/02/26/deep-nesting-with-has-many-through-and-a-join-model/
+        </loc>
+        <lastmod>2014-02-27T21:44:53-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/blog/archives/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-27T21:44:53-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/</loc>
-        <lastmod>2013-09-09T17:16:01-04:00</lastmod>
+        <lastmod>2014-02-27T21:44:53-05:00</lastmod>
     </url>
     <url>
         <loc>http://laptite.github.io/robots.txt</loc>
-        <lastmod>2013-09-09T16:19:42-04:00</lastmod>
+        <lastmod>2014-02-26T21:27:36-05:00</lastmod>
     </url>
 </urlset>
